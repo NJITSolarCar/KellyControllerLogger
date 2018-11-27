@@ -1,4 +1,4 @@
-package edu.njit.solarcar.electrical.kellyControllerLogger;
+package edu.njit.solarcar.electrical.motorLog;
 	
 import javafx.application.Application;
 import javafx.stage.Stage;
