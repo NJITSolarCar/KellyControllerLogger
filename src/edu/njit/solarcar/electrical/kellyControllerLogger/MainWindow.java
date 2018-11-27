@@ -2,7 +2,7 @@
  * Sample Skeleton for 'MainWindow.fxml' Controller Class
  */
 
-package application;
+package edu.njit.solarcar.electrical.kellyControllerLogger;
 
 import java.net.URL;
 import java.util.ResourceBundle;
