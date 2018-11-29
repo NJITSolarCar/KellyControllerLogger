@@ -10,7 +10,6 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-
 <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefWidth="500.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <VBox spacing="15.0" BorderPane.alignment="CENTER">
@@ -19,6 +18,12 @@
                <children>
                   <Label maxHeight="1.7976931348623157E308" text="Controller CAN ID: " />
                   <TextField fx:id="controllerCanIdField" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+            <HBox layoutX="20.0" layoutY="20.0" maxWidth="1.7976931348623157E308">
+               <children>
+                  <Label maxHeight="1.7976931348623157E308" text="Controller Response ID: " />
+                  <TextField fx:id="controllerResponseIdField" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
             <HBox layoutX="20.0" layoutY="20.0" maxWidth="1.7976931348623157E308">

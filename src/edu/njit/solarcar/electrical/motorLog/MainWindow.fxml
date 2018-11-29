@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.CheckBox?>
@@ -16,23 +15,23 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="900.0" prefWidth="1289.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainWindow">
+<BorderPane prefHeight="900.0" prefWidth="1289.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.njit.solarcar.electrical.motorLog.MainWindow">
    <center>
-      <SplitPane dividerPositions="0.455, 0.5" orientation="VERTICAL" BorderPane.alignment="CENTER">
+      <SplitPane dividerPositions="0.45278450363196127, 0.5024213075060533" orientation="VERTICAL" BorderPane.alignment="CENTER">
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                <children>
                   <LineChart fx:id="rpmChart" layoutX="-37.0" layoutY="-67.0" prefHeight="361.0" prefWidth="1106.0" title="RPM" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <xAxis>
-                      <CategoryAxis side="BOTTOM" />
+                      <NumberAxis fx:id="rpmChartAxisT" side="BOTTOM" />
                     </xAxis>
                     <yAxis>
-                      <NumberAxis side="LEFT" />
+                      <NumberAxis fx:id="rpmChartAxisY" side="LEFT" />
                     </yAxis>
                   </LineChart>
                </children>
             </AnchorPane>
-            <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+            <HBox maxHeight="-Infinity" minHeight="-Infinity" prefWidth="1267.0" spacing="10.0">
                <children>
                   <Label text="RPM:">
                      <font>
@@ -75,20 +74,20 @@
                <children>
                   <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <LineChart fx:id="currentChart" axisSortingPolicy="NONE" legendSide="RIGHT" prefHeight="373.0" prefWidth="1106.0" title="Current (RMS)">
+                        <LineChart fx:id="currentChart" axisSortingPolicy="NONE" legendSide="RIGHT" prefHeight="373.0" prefWidth="1106.0" title="Current (RMS)" HBox.hgrow="ALWAYS">
                           <xAxis>
-                            <CategoryAxis side="BOTTOM" />
+                            <NumberAxis fx:id="currentChartAxisT" side="BOTTOM" />
                           </xAxis>
                           <yAxis>
-                            <NumberAxis side="LEFT" />
+                            <NumberAxis fx:id="currentChartAxisY" side="LEFT" />
                           </yAxis>
                         </LineChart>
                         <VBox spacing="20.0">
                            <children>
-                              <CheckBox fx:id="totalCurrentCheck" mnemonicParsing="false" selected="true" text="Total" textFill="#f600ff" />
-                              <CheckBox fx:id="phaseACurrentCheck" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" selected="true" text="Phase A" textFill="RED" />
-                              <CheckBox fx:id="phaseBCurrentCheck" layoutX="20.0" layoutY="57.0" mnemonicParsing="false" selected="true" text="Phase B" textFill="#007f00" />
-                              <CheckBox fx:id="phaseCCurrentCheck" layoutX="20.0" layoutY="94.0" mnemonicParsing="false" selected="true" text="Phase C" textFill="BLUE" />
+                              <CheckBox fx:id="totalCurrentCheck" mnemonicParsing="false" onAction="#updateCurrentsShown" selected="true" text="Total" textFill="#f600ff" />
+                              <CheckBox fx:id="phaseACurrentCheck" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" onAction="#updateCurrentsShown" selected="true" text="Phase A" textFill="RED" />
+                              <CheckBox fx:id="phaseBCurrentCheck" layoutX="20.0" layoutY="57.0" mnemonicParsing="false" onAction="#updateCurrentsShown" selected="true" text="Phase B" textFill="#007f00" />
+                              <CheckBox fx:id="phaseCCurrentCheck" layoutX="20.0" layoutY="94.0" mnemonicParsing="false" onAction="#updateCurrentsShown" selected="true" text="Phase C" textFill="BLUE" />
                            </children>
                            <padding>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

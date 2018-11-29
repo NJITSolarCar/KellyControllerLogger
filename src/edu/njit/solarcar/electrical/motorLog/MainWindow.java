@@ -1,117 +1,217 @@
-/**
- * Sample Skeleton for 'MainWindow.fxml' Controller Class
- */
-
 package edu.njit.solarcar.electrical.motorLog;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Data;
+import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 
-public class MainWindow {
+public class MainWindow
+{
+	
+	@FXML
+	private LineChart<Number, Number> rpmChart;
+	
+	@FXML
+	private NumberAxis rpmChartAxisT;
+	
+	@FXML
+	private NumberAxis rpmChartAxisY;
+	
+	@FXML
+	private Label rpmLabel;
+	
+	@FXML
+	private Label totalCurrentLabel;
+	
+	@FXML
+	private Label phaseACurrentLabel;
+	
+	@FXML
+	private Label phaseBCurrentLabel;
+	
+	@FXML
+	private Label phaseCCurrentLabel;
+	
+	@FXML
+	private LineChart<Number, Number> currentChart;
+	
+	@FXML
+	private NumberAxis currentChartAxisT;
+	
+	@FXML
+	private NumberAxis currentChartAxisY;
+	
+	@FXML
+	private CheckBox totalCurrentCheck;
+	
+	@FXML
+	private CheckBox phaseACurrentCheck;
+	
+	@FXML
+	private CheckBox phaseBCurrentCheck;
+	
+	@FXML
+	private CheckBox phaseCCurrentCheck;
+	
+	@FXML
+	private Label comPortLabel;
+	
+	@FXML
+	private Label canIdLabel;
+	
+	@FXML
+	private Label logFileLabel;
+	
+	@FXML
+	private Label logTimeLabel;
+	
+	// Other parameters
+	private XYChart.Series<Number, Number> currentSeriesTotal;
+	private XYChart.Series<Number, Number> currentSeriesA;
+	private XYChart.Series<Number, Number> currentSeriesB;
+	private XYChart.Series<Number, Number> currentSeriesC;
+	
+	private XYChart.Series<Number, Number> rpmSeries;
+	
+	private double xRange;
+	private int numSamplesShown;
+	
+	
+	private void addToCurrentChart(
+		double t, int iA, int iB, int iC, int iTotal
+	) {
+		
+		// Set the x axis range
+		if(t > xRange) {
+			currentChartAxisT.setLowerBound(t - xRange);
+			currentChartAxisT.setUpperBound(t - xRange);
+		}
+		
+		// Update each series on the chart
+		ObservableList<Data<Number, Number>> listA = currentSeriesA.getData();
+		listA.add(new Data<Number, Number>(t, iA));
+		if(listA.size() > numSamplesShown) 
+			listA.remove(0);
+		
+		ObservableList<Data<Number, Number>> listB = currentSeriesB.getData();
+		listB.add(new Data<Number, Number>(t, iA));
+		if(listB.size() > numSamplesShown) 
+			listB.remove(0);
+		
+		ObservableList<Data<Number, Number>> listC = currentSeriesC.getData();
+		listC.add(new Data<Number, Number>(t, iA));
+		if(listC.size() > numSamplesShown) 
+			listC.remove(0);
+		
+		ObservableList<Data<Number, Number>> listTotal = currentSeriesTotal.getData();
+		listTotal.add(new Data<Number, Number>(t, iA));
+		if(listTotal.size() > numSamplesShown) 
+			listTotal.remove(0);
+		
+		
+		// Update the labels
+		totalCurrentLabel.setText(String.valueOf(iTotal));
+		phaseACurrentLabel.setText(String.valueOf(iA));
+		phaseBCurrentLabel.setText(String.valueOf(iB));
+		phaseCCurrentLabel.setText(String.valueOf(iC));
+	}
+	
+	
+	
+	private void addToRpmChart(double t, double rpm) {
+		// Set the x axis range
+		if(t > xRange) {
+			rpmChartAxisT.setLowerBound(t - xRange);
+			rpmChartAxisT.setUpperBound(t - xRange);
+		}
+		
+		ObservableList<Data<Number, Number>> list = rpmSeries.getData();
+		list.add(new Data<Number, Number>(t, rpm));
+		if(list.size() > numSamplesShown) 
+			list.remove(0);
+	}
+	
+	
 
-    @FXML // ResourceBundle that was given to the FXMLLoader
-    private ResourceBundle resources;
+	
+	@FXML
+	void updateCurrentsShown(ActionEvent event) {
+		ObservableList<Series<Number, Number>> lines = currentChart.getData();
+		
+		// Check each box, and if necessary swap out the actual series with an empty
+		// dummy one to preserve order, for coloring purposes, or swap the actual back in
+		boolean showTotal = totalCurrentCheck.isSelected();
+		if(showTotal && lines.get(0) != currentSeriesTotal)
+			lines.set(0, currentSeriesTotal);
+		else if(!showTotal && lines.get(0) == currentSeriesTotal)
+			lines.set(0, new XYChart.Series<>());
+		
+		boolean showA = phaseACurrentCheck.isSelected();
+		if(showA && lines.get(1) != currentSeriesA)
+			lines.set(0, currentSeriesA);
+		else if(!showA && lines.get(1) == currentSeriesA)
+			lines.set(0, new XYChart.Series<>());
+		
+		boolean showB = phaseBCurrentCheck.isSelected();
+		if(showB && lines.get(2) != currentSeriesB)
+			lines.set(0, currentSeriesB);
+		else if(!showB && lines.get(2) == currentSeriesB)
+			lines.set(0, new XYChart.Series<>());
+		
+		boolean showC = phaseCCurrentCheck.isSelected();
+		if(showC && lines.get(3) != currentSeriesC)
+			lines.set(0, currentSeriesC);
+		else if(!showC && lines.get(3) == currentSeriesC)
+			lines.set(0, new XYChart.Series<>());
+	}
+	
+	
+	
+	@FXML
+	void clearCharts(ActionEvent event) {
+		
+	}
+	
+	
+	
+	@FXML
+	void connectToController(ActionEvent event) {
+		
+	}
+	
+	
+	
+	@FXML
+	void disconnectFromController(ActionEvent event) {
+		
+	}
+	
+	
+	
+	@FXML
+	void newLogFile(ActionEvent event) {
+		
+	}
+	
+	
+	
+	@FXML
+	void startLog(ActionEvent event) {
+		
+	}
+	
+	
+	
+	@FXML
+	void stopLog(ActionEvent event) {
+		
+	}
 
-    @FXML // URL location of the FXML file that was given to the FXMLLoader
-    private URL location;
-
-    @FXML // fx:id="rpmChart"
-    private LineChart<?, ?> rpmChart; // Value injected by FXMLLoader
-
-    @FXML // fx:id="rpmLabel"
-    private Label rpmLabel; // Value injected by FXMLLoader
-
-    @FXML // fx:id="totalCurrentLabel"
-    private Label totalCurrentLabel; // Value injected by FXMLLoader
-
-    @FXML // fx:id="phaseACurrentLabel"
-    private Label phaseACurrentLabel; // Value injected by FXMLLoader
-
-    @FXML // fx:id="phaseBCurrentLabel"
-    private Label phaseBCurrentLabel; // Value injected by FXMLLoader
-
-    @FXML // fx:id="phaseCCurrentLabel"
-    private Label phaseCCurrentLabel; // Value injected by FXMLLoader
-
-    @FXML // fx:id="currentChart"
-    private LineChart<?, ?> currentChart; // Value injected by FXMLLoader
-
-    @FXML // fx:id="totalCurrentCheck"
-    private CheckBox totalCurrentCheck; // Value injected by FXMLLoader
-
-    @FXML // fx:id="phaseACurrentCheck"
-    private CheckBox phaseACurrentCheck; // Value injected by FXMLLoader
-
-    @FXML // fx:id="phaseBCurrentCheck"
-    private CheckBox phaseBCurrentCheck; // Value injected by FXMLLoader
-
-    @FXML // fx:id="phaseCCurrentCheck"
-    private CheckBox phaseCCurrentCheck; // Value injected by FXMLLoader
-
-    @FXML // fx:id="comPortLabel"
-    private Label comPortLabel; // Value injected by FXMLLoader
-
-    @FXML // fx:id="canIdLabel"
-    private Label canIdLabel; // Value injected by FXMLLoader
-
-    @FXML // fx:id="logFileLabel"
-    private Label logFileLabel; // Value injected by FXMLLoader
-
-    @FXML // fx:id="logTimeLabel"
-    private Label logTimeLabel; // Value injected by FXMLLoader
-
-    @FXML
-    void clearCharts(ActionEvent event) {
-
-    }
-
-    @FXML
-    void connectToController(ActionEvent event) {
-
-    }
-
-    @FXML
-    void disconnectFromController(ActionEvent event) {
-
-    }
-
-    @FXML
-    void newLogFile(ActionEvent event) {
-
-    }
-
-    @FXML
-    void startLog(ActionEvent event) {
-
-    }
-
-    @FXML
-    void stopLog(ActionEvent event) {
-
-    }
-
-    @FXML // This method is called by the FXMLLoader when initialization is complete
-    void initialize() {
-        assert rpmChart != null : "fx:id=\"rpmChart\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert rpmLabel != null : "fx:id=\"rpmLabel\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert totalCurrentLabel != null : "fx:id=\"totalCurrentLabel\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert phaseACurrentLabel != null : "fx:id=\"phaseACurrentLabel\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert phaseBCurrentLabel != null : "fx:id=\"phaseBCurrentLabel\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert phaseCCurrentLabel != null : "fx:id=\"phaseCCurrentLabel\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert currentChart != null : "fx:id=\"currentChart\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert totalCurrentCheck != null : "fx:id=\"totalCurrentCheck\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert phaseACurrentCheck != null : "fx:id=\"phaseACurrentCheck\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert phaseBCurrentCheck != null : "fx:id=\"phaseBCurrentCheck\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert phaseCCurrentCheck != null : "fx:id=\"phaseCCurrentCheck\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert comPortLabel != null : "fx:id=\"comPortLabel\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert canIdLabel != null : "fx:id=\"canIdLabel\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert logFileLabel != null : "fx:id=\"logFileLabel\" was not injected: check your FXML file 'MainWindow.fxml'.";
-        assert logTimeLabel != null : "fx:id=\"logTimeLabel\" was not injected: check your FXML file 'MainWindow.fxml'.";
-
-    }
+	
 }
