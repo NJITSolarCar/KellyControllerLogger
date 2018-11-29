@@ -101,27 +101,34 @@ public class KBL96151
 	
 	
 	/**
-	 * Creates a new motor controller. Will attempt to connect to it
-	 * right off the bat, by querying it for the model name. If a response
-	 * is received in a timely manner with the same ID as responseCanId, then
-	 * the connection is established, and communication can continue. If not,
-	 * an {@link IOException} will be raised.
+	 * Creates a new motor controller.
 	 * 
-	 * @param canBus          The {@link CanBus} that the motor controller is
-	 *                        connected to. This should be up and running before
-	 *                        trying to connect the motor controller
 	 * @param controllerCanId the CAN id that the motor controller listens for
 	 *                        command frames on
 	 * @param responseCanId   the CAN id that the motor controller writes response
 	 *                        frames to
-	 * @throws IOException If a connection to the motor controller cannot be
-	 *                     established
 	 */
-	public KBL96151(CANBus canBus, int controllerCanId, int responseCanId)
-		throws IOException {
-		this.canBus = canBus;
+	public KBL96151(int controllerCanId, int responseCanId) {
 		this.controllerCanId = controllerCanId;
 		this.responseCanId = responseCanId;
+	}
+	
+	
+	
+	/**
+	 * Attempts to connect to the motor controller, by querying it for the model
+	 * name. If a response is received in a timely manner with the same ID as
+	 * responseCanId, then the connection is established, and communication can
+	 * continue. If not, an {@link IOException} will be raised.
+	 * 
+	 * @param canBus The {@link CanBus} that the motor controller is
+	 *               connected to. This should be up and running before
+	 *               trying to connect the motor controller
+	 * @throws IOException If a CAN communications failure occurs
+	 * @return true if the motor controller responded to the name query
+	 */
+	public boolean connect(CANBus bus) throws IOException {
+		this.canBus = bus;
 		
 		// Add the frame processor. If it gets a response command
 		canBus.frameProcessors().add((frame) -> {
@@ -136,6 +143,22 @@ public class KBL96151
 					queryThread.interrupt();
 			}
 		});
+		
+		// Verify the connection
+		try {
+			byte[] modName = readFlash(
+				FLASH_INFO_MODULE_NAME,
+				FLASH_INFO_MODULE_NAME_LEN);
+			
+			// This should be true, but may not be in case of some unforeseen issue
+			boolean nameGood = modName[0] != CMD_CCP_INVALID;
+			if(!nameGood)
+				System.err.println("Invalid ");
+			return nameGood;
+		}
+		catch (TimeoutException e) {
+			return false;
+		}
 	}
 	
 	
@@ -259,11 +282,11 @@ public class KBL96151
 		CANFrame frame = query(CMD_CCP_A2D_BATCH_READ1);
 		AdcBatch1 val = new AdcBatch1();
 		
-		val.brake = ((double)frame.data[0]) * (5.0/255.0);
-		val.throttle = ((double)frame.data[1]) * (5.0/255.0);
-		val.vOperating = ((double)frame.data[2]) * VOLTAGE_SCALAR;
-		val.vs = ((double)frame.data[3]-120) * (5.25-4.75) + 4.75;
-		val.vBat = ((double)frame.data[4]) * VOLTAGE_SCALAR;
+		val.brake = ((double) frame.data[0]) * (5.0 / 255.0);
+		val.throttle = ((double) frame.data[1]) * (5.0 / 255.0);
+		val.vOperating = ((double) frame.data[2]) * VOLTAGE_SCALAR;
+		val.vs = ((double) frame.data[3] - 120) * (5.25 - 4.75) + 4.75;
+		val.vBat = ((double) frame.data[4]) * VOLTAGE_SCALAR;
 		
 		return val;
 	}
@@ -285,23 +308,11 @@ public class KBL96151
 		val.ib = frame.data[1];
 		val.ic = frame.data[2];
 		
-		val.va = ((double)frame.data[3]) * VOLTAGE_SCALAR;
-		val.vb = ((double)frame.data[4]) * VOLTAGE_SCALAR;
-		val.vc = ((double)frame.data[5]) * VOLTAGE_SCALAR;
+		val.va = ((double) frame.data[3]) * VOLTAGE_SCALAR;
+		val.vb = ((double) frame.data[4]) * VOLTAGE_SCALAR;
+		val.vc = ((double) frame.data[5]) * VOLTAGE_SCALAR;
 		
 		return val;
 	}
 	
 }
-
-
-
-
-
-
-
-
-
-
-
-

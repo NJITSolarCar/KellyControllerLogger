@@ -35,7 +35,7 @@ public class SerialCAN implements CANBus
 	
 	public SerialCAN(String portName, int baud) {
 		super();
-		this.portName = portName;
+		setPort(portName);
 		this.baud = baud;
 	}
 

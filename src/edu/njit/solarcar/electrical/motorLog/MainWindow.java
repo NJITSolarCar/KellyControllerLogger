@@ -1,15 +1,24 @@
 package edu.njit.solarcar.electrical.motorLog;
 
+import java.io.IOException;
+
+import edu.njit.solarcar.electrical.motorLog.util.ExceptionAlert;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Data;
 import javafx.scene.chart.XYChart.Series;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.stage.Stage;
 
 public class MainWindow
 {
@@ -83,12 +92,13 @@ public class MainWindow
 	private int numSamplesShown;
 	
 	
+	
 	private void addToCurrentChart(
 		double t, int iA, int iB, int iC, int iTotal
 	) {
 		
 		// Set the x axis range
-		if(t > xRange) {
+		if (t > xRange) {
 			currentChartAxisT.setLowerBound(t - xRange);
 			currentChartAxisT.setUpperBound(t - xRange);
 		}
@@ -96,24 +106,24 @@ public class MainWindow
 		// Update each series on the chart
 		ObservableList<Data<Number, Number>> listA = currentSeriesA.getData();
 		listA.add(new Data<Number, Number>(t, iA));
-		if(listA.size() > numSamplesShown) 
+		if (listA.size() > numSamplesShown)
 			listA.remove(0);
 		
 		ObservableList<Data<Number, Number>> listB = currentSeriesB.getData();
 		listB.add(new Data<Number, Number>(t, iA));
-		if(listB.size() > numSamplesShown) 
+		if (listB.size() > numSamplesShown)
 			listB.remove(0);
 		
 		ObservableList<Data<Number, Number>> listC = currentSeriesC.getData();
 		listC.add(new Data<Number, Number>(t, iA));
-		if(listC.size() > numSamplesShown) 
+		if (listC.size() > numSamplesShown)
 			listC.remove(0);
 		
-		ObservableList<Data<Number, Number>> listTotal = currentSeriesTotal.getData();
+		ObservableList<Data<Number, Number>> listTotal = currentSeriesTotal
+			.getData();
 		listTotal.add(new Data<Number, Number>(t, iA));
-		if(listTotal.size() > numSamplesShown) 
+		if (listTotal.size() > numSamplesShown)
 			listTotal.remove(0);
-		
 		
 		// Update the labels
 		totalCurrentLabel.setText(String.valueOf(iTotal));
@@ -126,48 +136,56 @@ public class MainWindow
 	
 	private void addToRpmChart(double t, double rpm) {
 		// Set the x axis range
-		if(t > xRange) {
+		if (t > xRange) {
 			rpmChartAxisT.setLowerBound(t - xRange);
 			rpmChartAxisT.setUpperBound(t - xRange);
 		}
 		
 		ObservableList<Data<Number, Number>> list = rpmSeries.getData();
 		list.add(new Data<Number, Number>(t, rpm));
-		if(list.size() > numSamplesShown) 
+		if (list.size() > numSamplesShown)
 			list.remove(0);
 	}
 	
 	
-
 	
 	@FXML
 	void updateCurrentsShown(ActionEvent event) {
 		ObservableList<Series<Number, Number>> lines = currentChart.getData();
 		
 		// Check each box, and if necessary swap out the actual series with an empty
-		// dummy one to preserve order, for coloring purposes, or swap the actual back in
+		// dummy one to preserve order, for coloring purposes, or swap the actual
+		// back in
 		boolean showTotal = totalCurrentCheck.isSelected();
-		if(showTotal && lines.get(0) != currentSeriesTotal)
+		if (showTotal && lines.get(0) != currentSeriesTotal)
 			lines.set(0, currentSeriesTotal);
-		else if(!showTotal && lines.get(0) == currentSeriesTotal)
+		else if (
+			!showTotal && lines.get(0) == currentSeriesTotal
+			)
 			lines.set(0, new XYChart.Series<>());
 		
 		boolean showA = phaseACurrentCheck.isSelected();
-		if(showA && lines.get(1) != currentSeriesA)
+		if (showA && lines.get(1) != currentSeriesA)
 			lines.set(0, currentSeriesA);
-		else if(!showA && lines.get(1) == currentSeriesA)
+		else if (
+			!showA && lines.get(1) == currentSeriesA
+			)
 			lines.set(0, new XYChart.Series<>());
 		
 		boolean showB = phaseBCurrentCheck.isSelected();
-		if(showB && lines.get(2) != currentSeriesB)
+		if (showB && lines.get(2) != currentSeriesB)
 			lines.set(0, currentSeriesB);
-		else if(!showB && lines.get(2) == currentSeriesB)
+		else if (
+			!showB && lines.get(2) == currentSeriesB
+			)
 			lines.set(0, new XYChart.Series<>());
 		
 		boolean showC = phaseCCurrentCheck.isSelected();
-		if(showC && lines.get(3) != currentSeriesC)
+		if (showC && lines.get(3) != currentSeriesC)
 			lines.set(0, currentSeriesC);
-		else if(!showC && lines.get(3) == currentSeriesC)
+		else if (
+			!showC && lines.get(3) == currentSeriesC
+			)
 			lines.set(0, new XYChart.Series<>());
 	}
 	
@@ -180,9 +198,17 @@ public class MainWindow
 	
 	
 	
+	/**
+	 * Open the connection dialog and then attempt a connection
+	 * 
+	 * @param event
+	 */
 	@FXML
 	void connectToController(ActionEvent event) {
-		
+		String port = CanConnectController.getController().promptSelectPort();
+		if (port != null) {
+			// Connect to the controller
+		}
 	}
 	
 	
@@ -213,5 +239,14 @@ public class MainWindow
 		
 	}
 
+
+
+	/**
+	 * Called when a polling error has occured, and the polling loop has stopped
+	 */
+	public void pollingError() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 }

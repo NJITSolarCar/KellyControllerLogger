@@ -14,4 +14,5 @@ public class ConfigData
 	public double samplingFreq;
 	public int samplePeriod;
 	public File logDir;
+	public int motorPoles;
 }
