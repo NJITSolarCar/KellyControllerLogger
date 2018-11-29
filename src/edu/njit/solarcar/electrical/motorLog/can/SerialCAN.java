@@ -2,6 +2,8 @@ package edu.njit.solarcar.electrical.motorLog.can;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import jssc.SerialPort;
 import jssc.SerialPortException;
@@ -27,11 +29,21 @@ public class SerialCAN implements CANBus
 	private int baud = 9600;
 	private SerialPort port;
 	private SerialCanRxListener listener;
+	private Set<FrameProcessor> frameProcs;
 	
 	
 	
+	public SerialCAN(String portName, int baud) {
+		super();
+		this.portName = portName;
+		this.baud = baud;
+	}
+
+
+
+
 	@Override
-	public void connect(FrameProcessor proc, CANBitrate bitrate)
+	public void connect(CANBitrate bitrate)
 		throws IOException {
 		port = new SerialPort(portName);
 		
@@ -47,7 +59,7 @@ public class SerialCAN implements CANBus
 			port.readBytes();
 			
 			// Create the listener
-			listener = new SerialCanRxListener(proc, port);
+			listener = new SerialCanRxListener(frameProcs, port);
 			port.addEventListener(listener);
 			
 			// Perform a connection check implicitly. Will throw an exception
@@ -114,7 +126,12 @@ public class SerialCAN implements CANBus
 	
 	@Override
 	public boolean isConnected() {
-		return port != null && port.isOpened();
+		try { 
+			getVersion(); 
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 	
 	
@@ -172,12 +189,22 @@ public class SerialCAN implements CANBus
 	public void disconnect() throws IOException {
 		if ( port != null ) {
 			try {
+				port.writeString("C\r");
 				port.closePort();
 			}
 			catch (SerialPortException e) {
 				throw new IOException(e);
 			}
 		}
+	}
+	
+	
+	
+	@Override
+	public Set<FrameProcessor> frameProcessors() {
+		if(frameProcs == null)
+			frameProcs = new HashSet<>();
+		return frameProcs;
 	}
 	
 	
@@ -234,5 +261,6 @@ public class SerialCAN implements CANBus
 	public void setRxTimeout(int rxTimeout) {
 		this.rxTimeout = rxTimeout;
 	}
+	
 	
 }

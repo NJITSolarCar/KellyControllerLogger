@@ -2,6 +2,7 @@ package edu.njit.solarcar.electrical.motorLog.can;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Set;
 
 import jssc.SerialPort;
 import jssc.SerialPortEvent;
@@ -28,7 +29,7 @@ public class SerialCanRxListener implements SerialPortEventListener
 	
 	
 	
-	public SerialCanRxListener(FrameProcessor proc, SerialPort port) {
+	public SerialCanRxListener(Set<FrameProcessor> procs, SerialPort port) {
 		super();
 		this.port = port;
 		
@@ -38,8 +39,11 @@ public class SerialCanRxListener implements SerialPortEventListener
 		// When active, poll through all the received frames and process them
 		frameProcThread = new Thread(() -> {
 			do {
-				while (!frames.isEmpty())
-					proc.processFrame(frames.poll());
+				while (!frames.isEmpty()) {
+					CANFrame f = frames.poll();
+					for(FrameProcessor proc : procs)
+						proc.processFrame(f);
+				}
 				
 				// Wait until we get some more frames
 				try {
@@ -55,16 +59,18 @@ public class SerialCanRxListener implements SerialPortEventListener
 	}
 	
 	
+	
 	/**
 	 * Waits until a transmission is fully received (i.e, none are pending)
+	 * 
 	 * @param timeout the time to wait if > 0, or infinite if <= 0
 	 * @return true if timed out, false otherwise
 	 */
 	public boolean waitRecvDone(int timeout) {
 		long tEnd = System.currentTimeMillis() + timeout;
 		
-	// if it's bigger than 0, a recieve is in progress
-		while (bufPtr > 0 && (timeout <= 0 ||System.currentTimeMillis() < tEnd)) 
+		// if it's bigger than 0, a recieve is in progress
+		while (bufPtr > 0 && (timeout <= 0 || System.currentTimeMillis() < tEnd))
 			;
 		
 		return tEnd > System.currentTimeMillis();
@@ -109,7 +115,7 @@ public class SerialCanRxListener implements SerialPortEventListener
 					frames.add(frame);
 					frameProcThread.notify();
 				}
-			} else if(b == 0x07) { // TODO: signal an error here
+			} else if (b == 0x07) { // TODO: signal an error here
 				bufPtr = 0;
 			}
 		}
