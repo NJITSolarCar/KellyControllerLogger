@@ -101,6 +101,25 @@ public class KBL96151
 	
 	
 	/**
+	 * Represents teh results of a monitor 1 query
+	 * @author Duemmer
+	 *
+	 */
+	public class Monitor1
+	{
+		public final long timeRecv = System.currentTimeMillis();
+		
+		public double pwm;
+		public boolean motorEnabled;
+		public double motorTemp;
+		public double controllerTemp;
+		public double fetmosLowTemp;
+		public double fetmosHiTemp;
+	}
+	
+	
+	
+	/**
 	 * Creates a new motor controller.
 	 * 
 	 * @param controllerCanId the CAN id that the motor controller listens for
@@ -195,6 +214,7 @@ public class KBL96151
 		throws IOException, TimeoutException {
 		CANFrame frame = new CANFrame();
 		frame.data[0] = command;
+		frame.id = controllerCanId;
 		
 		// Build the frame
 		if (data == null)
@@ -311,6 +331,21 @@ public class KBL96151
 		val.va = ((double) frame.data[3]) * VOLTAGE_SCALAR;
 		val.vb = ((double) frame.data[4]) * VOLTAGE_SCALAR;
 		val.vc = ((double) frame.data[5]) * VOLTAGE_SCALAR;
+		
+		return val;
+	}
+	
+	
+	public Monitor1 readMonitor1() throws IOException, TimeoutException {
+		CANFrame frame = query(CMD_CCP_MONITOR1);
+		Monitor1 val = new Monitor1();
+		
+		val.pwm = ((double)frame.data[0]) / 100;
+		val.motorEnabled = frame.data[1] != 0;
+		val.motorTemp = frame.data[2];
+		val.controllerTemp = frame.data[3];
+		val.fetmosHiTemp = frame.data[4];
+		val.fetmosLowTemp = frame.data[5];
 		
 		return val;
 	}

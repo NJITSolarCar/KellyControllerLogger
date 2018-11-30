@@ -16,5 +16,11 @@ public class LogData
 	public double iB;
 	public double iC;
 	public double vbat;
-	
+	public double vA;
+	public double vB;
+	public double vC;
+	public double vtotal;
+	public double throttle;
+	public double motorTemp;
+	public double controllerTemp;
 }

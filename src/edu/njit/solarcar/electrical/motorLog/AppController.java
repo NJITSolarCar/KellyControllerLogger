@@ -5,7 +5,6 @@ import java.util.prefs.Preferences;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.fxml.FXMLLoader;
@@ -14,14 +13,11 @@ public class AppController extends Application
 {
 	private static final ConfigData DEFAULT_DATA = new ConfigData();
 	private static Preferences prefs;
+	private static ConfigData config = null;
 	
 	private static MainWindow mainWindowController;
-	private Node mainWindowRoot;
 	
-	private static ConfigController configController;
-	// private static node
-	
-	private static CanConnectController canConnectController;
+	private static ComController comController;
 	
 	
 	
@@ -39,6 +35,8 @@ public class AppController extends Application
 			
 			// Obtain a ref to the config
 			prefs = Preferences.userRoot().node(getClass().getName());
+			
+			comController = new ComController(readConfig());
 			
 			// Load all the FXMl files
 			FXMLLoader mainWindowLoader = new FXMLLoader(
@@ -78,28 +76,32 @@ public class AppController extends Application
 	 * @return
 	 */
 	public static ConfigData readConfig() {
-		ConfigData d = new ConfigData();
+		if(config == null) {
+			ConfigData d = new ConfigData();
+			
+			d.controllerCanId = prefs
+				.getInt("controllerCanId", DEFAULT_DATA.controllerCanId);
+			
+			d.controllerResponseId = prefs
+				.getInt("controllerResponseId", DEFAULT_DATA.controllerResponseId);
+			
+			d.samplingFreq = prefs
+				.getDouble("samplingFreq", DEFAULT_DATA.samplingFreq);
+			
+			d.samplePeriod = prefs
+				.getInt("samplePeriod", DEFAULT_DATA.samplePeriod);
+			
+			d.motorPoles = prefs
+				.getInt("motorPoles", DEFAULT_DATA.motorPoles);
+			
+			// Handle root dir differently because we can't work straight with objects
+			d.logDir = new File(
+				prefs.get("logDir", DEFAULT_DATA.logDir.getAbsolutePath()));
+			
+			return d;
+		}
 		
-		d.controllerCanId = prefs
-			.getInt("controllerCanId", DEFAULT_DATA.controllerCanId);
-		
-		d.controllerResponseId = prefs
-			.getInt("controllerResponseId", DEFAULT_DATA.controllerResponseId);
-		
-		d.samplingFreq = prefs
-			.getDouble("samplingFreq", DEFAULT_DATA.samplingFreq);
-		
-		d.samplePeriod = prefs
-			.getInt("samplePeriod", DEFAULT_DATA.samplePeriod);
-		
-		d.motorPoles = prefs
-			.getInt("motorPoles", DEFAULT_DATA.motorPoles);
-		
-		// Handle root dir differently because we can't work straight with objects
-		d.logDir = new File(
-			prefs.get("logDir", DEFAULT_DATA.logDir.getAbsolutePath()));
-		
-		return d;
+		return config;
 	}
 	
 	
@@ -114,5 +116,13 @@ public class AppController extends Application
 		prefs.putInt("samplePeriod", d.samplePeriod);
 		prefs.put("logDir", d.logDir.getAbsolutePath());
 		prefs.putInt("motorPoles", d.motorPoles);
+		
+		config = d;
+	}
+
+
+
+	public static ComController getComController() {
+		return comController;
 	}
 }

@@ -49,6 +49,17 @@ public interface CANBus
 	
 	
 	/**
+	 * Returns an "address" for identifying the device. The address doesn't
+	 * have to be formal, but is here rather to serve as a utility to identify
+	 * a CAN device. Note that this address should be a link layer address, like
+	 * a COM port for a {@link SerialCAN} device, for instance
+	 * @return The address, or an empty string if not connected.
+	 */
+	public String getAddress();
+	
+	
+	
+	/**
 	 * Sends a {@link CANFrame} onto the bus
 	 * 
 	 * @param frame The frame to transmit

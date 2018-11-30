@@ -22,6 +22,13 @@ import java.util.stream.Stream;
  * <li>Phase B Current</li>
  * <li>Phase C Current</li>
  * <li>Battery Voltage</li>
+ * <li>Total Voltage</li>
+ * <li>Phase A Voltage</li>
+ * <li>Phase B Voltage</li>
+ * <li>Phase C Voltage</li>
+ * <li>Throttle</li>
+ * <li>Motor Temperature</li>
+ * <li>Controller temperature</li>
  * </ul>
  * 
  * @author Duemmer
@@ -31,10 +38,12 @@ public class MotorLogger
 {
 	private BufferedWriter csvWriter;
 	private long startMillis;
+	private File targetFile;
 	
 	
 	
 	public MotorLogger(File targetFile) throws IOException {
+		this.targetFile = targetFile;
 		csvWriter = new BufferedWriter(new FileWriter(targetFile, false));
 		
 		// Write header
@@ -45,7 +54,14 @@ public class MotorLogger
 			"Phase A Current",
 			"Phase B Current",
 			"Phase C Current",
-			"Battery Voltage")
+			"Battery Voltage",
+			"Total Voltage",
+			"Phase A Voltage",
+			"Phase B Voltage",
+			"Phase C Voltage",
+			"Throttle",
+			"Motor Temperature",
+			"Controller Temperature")
 			.collect(Collectors.joining(",", "", "\n\n"));
 		csvWriter.write(header);
 		
@@ -54,15 +70,28 @@ public class MotorLogger
 	
 	
 	/**
-	 * Writes a row of data to teh log file
+	 * Writes a row of data to the log file
 	 * @param data
 	 * @throws IOException
 	 */
 	public void writeRow(LogData data) throws IOException {
 		double t = ((double) (System.currentTimeMillis() - startMillis)) / 1000;
-		String s = Stream
-			.of(t, data.rpm, data.iTotal, data.iA, data.iB, data.iC, data.vbat)
-			.map((d) -> String.format("%.03f", d))
+		String s = Stream.of(
+			t, 
+			data.rpm, 
+			data.iTotal,
+			data.iA, 
+			data.iB, 
+			data.iC, 
+			data.vbat,
+			data.vtotal,
+			data.vA,
+			data.vB,
+			data.vC,
+			data.throttle,
+			data.motorTemp,
+			data.controllerTemp
+			).map((d) -> String.format("%.03f", d))
 			.collect(Collectors.joining(",", "", "\n"));
 		
 		csvWriter.write(s);
@@ -95,5 +124,15 @@ public class MotorLogger
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
+	}
+	
+	
+	public long getMillisRunning() {
+		return System.currentTimeMillis() - startMillis;
+	}
+
+
+	public File getTargetFile() {
+		return targetFile;
 	}
 }

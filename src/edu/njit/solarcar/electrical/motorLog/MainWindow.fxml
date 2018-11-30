@@ -8,6 +8,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -17,64 +18,106 @@
 
 <BorderPane prefHeight="900.0" prefWidth="1289.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.njit.solarcar.electrical.motorLog.MainWindow">
    <center>
-      <SplitPane dividerPositions="0.45278450363196127, 0.5024213075060533" orientation="VERTICAL" BorderPane.alignment="CENTER">
+      <SplitPane dividerPositions="0.07263922518159806, 0.32566585956416466, 0.5883777239709443, 0.7905569007263923" orientation="VERTICAL" BorderPane.alignment="CENTER">
         <items>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+            <VBox maxHeight="-Infinity" minHeight="-Infinity" prefHeight="57.0">
                <children>
-                  <LineChart fx:id="rpmChart" layoutX="-37.0" layoutY="-67.0" prefHeight="361.0" prefWidth="1106.0" title="RPM" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <xAxis>
-                      <NumberAxis fx:id="rpmChartAxisT" side="BOTTOM" />
-                    </xAxis>
-                    <yAxis>
-                      <NumberAxis fx:id="rpmChartAxisY" side="LEFT" />
-                    </yAxis>
-                  </LineChart>
+                  <HBox maxHeight="-Infinity" minHeight="-Infinity" prefHeight="27.0" prefWidth="1267.0" spacing="10.0">
+                     <children>
+                        <Label text="RPM:">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="rpmLabel" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="150.0" text="0.0" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="10.0" text="Current:">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="totalCurrentLabel" alignment="CENTER" layoutX="65.0" layoutY="10.0" minWidth="-Infinity" prefWidth="150.0" text="0.0" textAlignment="CENTER" textFill="#f600ff">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="phaseACurrentLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="379.0" layoutY="10.0" minWidth="-Infinity" prefWidth="150.0" text="0.0" textAlignment="CENTER" textFill="RED">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="phaseBCurrentLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="602.0" layoutY="10.0" minWidth="-Infinity" prefWidth="150.0" text="0.0" textAlignment="CENTER" textFill="#007f00">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="phaseCCurrentLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="602.0" layoutY="10.0" minWidth="-Infinity" prefWidth="150.0" text="0.0" textAlignment="CENTER" textFill="BLUE">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <Separator prefWidth="200.0" />
+                  <HBox maxHeight="-Infinity" minHeight="-Infinity" prefHeight="27.0" prefWidth="1267.0" spacing="10.0">
+                     <children>
+                        <Label text="Throttle: ">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="throttleLabel" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="120.0" text="0.0" HBox.hgrow="ALWAYS">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="10.0" text="Battery Voltage:">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="vbatLabel" layoutX="75.0" layoutY="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="120.0" text="0.0">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="10.0" text="Motor Voltage:">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="totalVoltagelabel" alignment="CENTER" layoutX="65.0" layoutY="10.0" minWidth="-Infinity" prefWidth="150.0" text="0.0" textAlignment="CENTER" textFill="#f600ff">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="phaseAVoltageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="379.0" layoutY="10.0" minWidth="-Infinity" prefWidth="150.0" text="0.0" textAlignment="CENTER" textFill="RED">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="phaseBVoltageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="602.0" layoutY="10.0" minWidth="-Infinity" prefWidth="150.0" text="0.0" textAlignment="CENTER" textFill="#007f00">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="phaseCVoltageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="602.0" layoutY="10.0" minWidth="-Infinity" prefWidth="150.0" text="0.0" textAlignment="CENTER" textFill="BLUE">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
                </children>
-            </AnchorPane>
-            <HBox maxHeight="-Infinity" minHeight="-Infinity" prefWidth="1267.0" spacing="10.0">
-               <children>
-                  <Label text="RPM:">
-                     <font>
-                        <Font size="24.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="rpmLabel" layoutX="10.0" layoutY="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="150.0" text="0.0" HBox.hgrow="ALWAYS">
-                     <font>
-                        <Font size="24.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="10.0" layoutY="10.0" text="RMS Current:">
-                     <font>
-                        <Font size="24.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="totalCurrentLabel" alignment="CENTER" layoutX="65.0" layoutY="10.0" minWidth="-Infinity" prefWidth="150.0" text="0.0" textAlignment="CENTER" textFill="#f600ff">
-                     <font>
-                        <Font size="24.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="phaseACurrentLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="379.0" layoutY="10.0" minWidth="-Infinity" prefWidth="150.0" text="0.0" textAlignment="CENTER" textFill="RED">
-                     <font>
-                        <Font size="24.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="phaseBCurrentLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="602.0" layoutY="10.0" minWidth="-Infinity" prefWidth="150.0" text="0.0" textAlignment="CENTER" textFill="#007f00">
-                     <font>
-                        <Font size="24.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="phaseCCurrentLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="602.0" layoutY="10.0" minWidth="-Infinity" prefWidth="150.0" text="0.0" textAlignment="CENTER" textFill="BLUE">
-                     <font>
-                        <Font size="24.0" />
-                     </font>
-                  </Label>
-               </children>
-            </HBox>
+            </VBox>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                <children>
                   <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <LineChart fx:id="currentChart" axisSortingPolicy="NONE" legendSide="RIGHT" prefHeight="373.0" prefWidth="1106.0" title="Current (RMS)" HBox.hgrow="ALWAYS">
+                        <LineChart fx:id="currentChart" axisSortingPolicy="NONE" legendSide="RIGHT" prefHeight="373.0" prefWidth="1106.0" title="Current" titleSide="LEFT" HBox.hgrow="ALWAYS">
                           <xAxis>
                             <NumberAxis fx:id="currentChartAxisT" side="BOTTOM" />
                           </xAxis>
@@ -97,6 +140,58 @@
                   </HBox>
                </children>
             </AnchorPane>
+            <AnchorPane layoutX="10.0" layoutY="10.0" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+               <children>
+                  <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <LineChart fx:id="voltageChart" axisSortingPolicy="NONE" legendSide="RIGHT" prefHeight="373.0" prefWidth="1106.0" title="Voltage" titleSide="LEFT" HBox.hgrow="ALWAYS">
+                           <xAxis>
+                              <NumberAxis fx:id="voltageChartAxisT" side="BOTTOM" />
+                           </xAxis>
+                           <yAxis>
+                              <NumberAxis fx:id="currentChartAxisY1" side="LEFT" />
+                           </yAxis>
+                        </LineChart>
+                        <VBox spacing="20.0">
+                           <children>
+                              <CheckBox fx:id="totalVoltageCheck" mnemonicParsing="false" onAction="#updateVoltageShown" selected="true" text="Total" textFill="#f600ff" />
+                              <CheckBox fx:id="phaseAVoltageCheck" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" onAction="#updateVoltageShown" selected="true" text="Phase A" textFill="RED" />
+                              <CheckBox fx:id="phaseBVoltageCheck" layoutX="20.0" layoutY="57.0" mnemonicParsing="false" onAction="#updateVoltageShown" selected="true" text="Phase B" textFill="#007f00" />
+                              <CheckBox fx:id="phaseCVoltageCheck" layoutX="20.0" layoutY="94.0" mnemonicParsing="false" onAction="#updateVoltageShown" selected="true" text="Phase C" textFill="BLUE" />
+                              <CheckBox fx:id="vBatCheck" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" onAction="#updateVoltageShown" selected="true" text="Battery" textFill="#f600ff" />
+                           </children>
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+            <AnchorPane>
+               <children>
+                  <LineChart fx:id="throttleChart" title="Throttle" titleSide="LEFT" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <xAxis>
+                      <NumberAxis fx:id="throttleChartAxisT" side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis fx:id="throttleChartAxisY" side="LEFT" />
+                    </yAxis>
+                  </LineChart>
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+               <children>
+                  <LineChart fx:id="rpmChart" layoutX="-37.0" layoutY="-67.0" prefHeight="361.0" prefWidth="1106.0" title="RPM      " titleSide="LEFT" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <xAxis>
+                      <NumberAxis fx:id="rpmChartAxisT" side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                      <NumberAxis fx:id="rpmChartAxisY" side="LEFT" />
+                    </yAxis>
+                  </LineChart>
+               </children>
+            </AnchorPane>
         </items>
          <BorderPane.margin>
             <Insets bottom="10.0" left="10.0" right="10.0" />
@@ -110,7 +205,6 @@
               <menus>
                 <Menu mnemonicParsing="false" text="Logging">
                   <items>
-                    <MenuItem mnemonicParsing="false" onAction="#newLogFile" text="New Log..." />
                         <MenuItem mnemonicParsing="false" onAction="#startLog" text="Start" />
                         <MenuItem mnemonicParsing="false" onAction="#stopLog" text="Stop" />
                         <MenuItem mnemonicParsing="false" onAction="#clearCharts" text="Clear Charts" />
@@ -122,6 +216,11 @@
                         <MenuItem mnemonicParsing="false" onAction="#disconnectFromController" text="Disconnect" />
                   </items>
                 </Menu>
+                  <Menu mnemonicParsing="false" text="Settings">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#editSettings" text="Edit Settings..." />
+                    </items>
+                  </Menu>
               </menus>
             </MenuBar>
             <HBox spacing="10.0">
@@ -129,7 +228,7 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </VBox.margin>
                <children>
-                  <Label text="SocketCAN COM Port:">
+                  <Label text="UsbCAN COM Port:">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font></Label>

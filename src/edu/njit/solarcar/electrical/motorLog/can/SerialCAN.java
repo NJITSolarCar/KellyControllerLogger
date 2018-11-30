@@ -31,6 +31,8 @@ public class SerialCAN implements CANBus
 	private SerialCanRxListener listener;
 	private Set<FrameProcessor> frameProcs;
 	
+	private boolean isConnected;
+	
 	
 	
 	public SerialCAN(String portName, int baud) {
@@ -80,6 +82,9 @@ public class SerialCAN implements CANBus
 			if (r2[0] != '\r') { throw new IOException(
 				String.format("Bad response 0x%02X from device", r2[0])); }
 			
+			// If we get this far, we are connected
+			isConnected = true;
+			
 			// Enable the rx listener
 			setRxInterruptEnable(true);
 		}
@@ -115,6 +120,7 @@ public class SerialCAN implements CANBus
 		}
 		
 		catch (SerialPortException | SerialPortTimeoutException e) {
+			isConnected = false;
 			throw new IOException(e);
 		}
 		
@@ -126,12 +132,7 @@ public class SerialCAN implements CANBus
 	
 	@Override
 	public boolean isConnected() {
-		try { 
-			getVersion(); 
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
+		return isConnected;
 	}
 	
 	
@@ -169,15 +170,20 @@ public class SerialCAN implements CANBus
 		// Send. Momentarily disable the receive loop to manually inspect the response
 		setRxInterruptEnable(false);
 		try {
-			if ( !port.writeString(buf.toString()) )
+			if ( !port.writeString(buf.toString()) ) {
+				isConnected = false;
 				throw new IOException("Failed to write frame data to port!");
+			}
 			
 			// Check the response
 			byte[] resp = port.readBytes(2, rxTimeout);
-			if(resp[0] != 'Z' && resp[1] != '\r')
+			if(resp[0] != 'Z' && resp[1] != '\r') {
+				isConnected = false;
 				throw new IOException("Invalid response 0x%02X %02X after packet sent");
+			}
 		}
 		catch (SerialPortException | SerialPortTimeoutException e) {
+			isConnected = false;
 			throw new IOException(e);
 		}
 		finally { setRxInterruptEnable(true); } // Make sure to turn interrupts back on
@@ -187,6 +193,7 @@ public class SerialCAN implements CANBus
 	
 	@Override
 	public void disconnect() throws IOException {
+		isConnected = false;
 		if ( port != null ) {
 			try {
 				port.writeString("C\r");
@@ -260,6 +267,17 @@ public class SerialCAN implements CANBus
 	 */
 	public void setRxTimeout(int rxTimeout) {
 		this.rxTimeout = rxTimeout;
+	}
+
+
+
+
+	@Override
+	public String getAddress() {
+		if(isConnected())
+			return portName;
+		else
+			return "";
 	}
 	
 	
