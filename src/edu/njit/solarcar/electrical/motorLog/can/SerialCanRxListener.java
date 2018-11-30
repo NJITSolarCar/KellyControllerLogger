@@ -47,7 +47,7 @@ public class SerialCanRxListener implements SerialPortEventListener
 				
 				// Wait until we get some more frames
 				try {
-					frameProcThread.wait();
+					Thread.sleep(1000);
 				}
 				catch (InterruptedException e) {}
 			} while (!shutdown);
@@ -69,7 +69,7 @@ public class SerialCanRxListener implements SerialPortEventListener
 	public boolean waitRecvDone(int timeout) {
 		long tEnd = System.currentTimeMillis() + timeout;
 		
-		// if it's bigger than 0, a recieve is in progress
+		// if it's bigger than 0, a receive is in progress
 		while (bufPtr > 0 && (timeout <= 0 || System.currentTimeMillis() < tEnd))
 			;
 		
@@ -84,7 +84,7 @@ public class SerialCanRxListener implements SerialPortEventListener
 	 */
 	public void shutdown() {
 		shutdown = true;
-		frameProcThread.notify();
+		frameProcThread.interrupt();
 	}
 	
 	
@@ -97,26 +97,30 @@ public class SerialCanRxListener implements SerialPortEventListener
 	@Override
 	public void serialEvent(SerialPortEvent event) {
 		byte[] bytes;
-		
-		try {
-			bytes = port.readBytes();
-		}
-		catch (SerialPortException e) {
-			throw new RuntimeException(e);
-		}
-		
-		for (byte b : bytes) {
-			buf[bufPtr++] = b;
+		if(event.isRXCHAR() && event.getEventValue() > 0) {
+			try {
+				bytes = port.readBytes();
+				System.out.print(new String(bytes));
+			}
+			catch (SerialPortException e) {
+				throw new RuntimeException(e);
+			}
 			
-			if (b == '\r') {
-				CANFrame frame = procFrameBuf();
-				if (frame != null) {
-					bufPtr = 0;
-					frames.add(frame);
-					frameProcThread.notify();
+			for (byte b : bytes) {
+				buf[bufPtr++] = b;
+				
+				if (b == '\r') {
+					System.out.println("\\r");
+					CANFrame frame = procFrameBuf();
+					clearBuf();
+					if (frame != null) {
+						frames.add(frame);
+						frameProcThread.interrupt();
+					}
+				} else if (b == 0x07) { // TODO: signal an error here
+					System.err.println("Got NACK from device");
+					clearBuf();
 				}
-			} else if (b == 0x07) { // TODO: signal an error here
-				bufPtr = 0;
 			}
 		}
 	}
@@ -146,9 +150,9 @@ public class SerialCanRxListener implements SerialPortEventListener
 			case 'r':
 				frame.rtr = true;
 				frame.ide = false;
-				frame.len = (byte) Character.digit(buf[5], 10);
-				frame.id = Integer.parseInt(new String(buf, 1, 4), 16);
-				dataIdx = 6;
+				frame.len = (byte) Character.digit(buf[4], 10);
+				frame.id = Integer.parseInt(new String(buf, 1, 3), 16);
+				dataIdx = 5;
 				break;
 			case 'T':
 				frame.rtr = false;
@@ -160,9 +164,9 @@ public class SerialCanRxListener implements SerialPortEventListener
 			case 't':
 				frame.rtr = false;
 				frame.ide = false;
-				frame.len = (byte) Character.digit(buf[5], 10);
-				frame.id = Integer.parseInt(new String(buf, 1, 4), 16);
-				dataIdx = 6;
+				frame.len = (byte) Character.digit(buf[4], 10);
+				frame.id = Integer.parseInt(new String(buf, 1, 3), 16);
+				dataIdx = 5;
 				break;
 			default: // Not a CAN frame, so ignore it
 				return null;
@@ -171,10 +175,18 @@ public class SerialCanRxListener implements SerialPortEventListener
 		// get the data
 		for (int i = 0; i < frame.len; i++) {
 			int offset = dataIdx + 2 * i;
-			frame.data[i] = Byte.parseByte(new String(buf, offset, 2), 16);
+			frame.data[i] = (byte) Integer.parseInt(new String(buf, offset, 2), 16);
 		}
 		
 		return frame;
+	}
+	
+	
+	
+	private void clearBuf() {
+		for(int i=0; i<bufPtr; i++)
+			buf[i] = 0;
+		bufPtr = 0;
 	}
 	
 }

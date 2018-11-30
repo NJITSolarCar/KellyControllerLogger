@@ -36,15 +36,17 @@ public class CanConnectController
 	
 	
 	public static CanConnectController getController() {
-		if (impl != null)
+		if (impl == null)
 			impl = new CanConnectController();
 		return impl;
 	}
 	
 	
 	
-	private CanConnectController() {
-		FXMLLoader ldr = new FXMLLoader(getClass().getResource("CanConnect.fxml"));
+	public CanConnectController() {
+		FXMLLoader ldr = new FXMLLoader();
+		ldr.setController(this);
+		ldr.setLocation(getClass().getResource("CanConnect.fxml"));
 		stage = new Stage();
 		try {
 			stage.setScene(new Scene(ldr.load()));
@@ -53,23 +55,20 @@ public class CanConnectController
 			Alert a = new ExceptionAlert(e, "Failed to load CanConnect view");
 			a.showAndWait();
 		}
-		stage.setOnCloseRequest((event) -> {
-			stage.close();
-		});
-		impl = ldr.getController();
+		stage.setOnCloseRequest((event) -> stage.close());
 	}
 	
 	
 	
 	@FXML
-	private void cancelConnect(ActionEvent event) {
+	void cancelConnect(ActionEvent event) {
 		stage.close();
 	}
 	
 	
 	
 	@FXML
-	private void connectToDevice(ActionEvent event) {
+	void connectToDevice(ActionEvent event) {
 		selectedPort = comSelect.getSelectionModel().getSelectedItem();
 		stage.close();
 	}

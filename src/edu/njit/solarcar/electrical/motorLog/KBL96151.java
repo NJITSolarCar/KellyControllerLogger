@@ -152,13 +152,15 @@ public class KBL96151
 		// Add the frame processor. If it gets a response command
 		canBus.frameProcessors().add((frame) -> {
 			if (frame.id == responseCanId) {
+				if(frame.data[0] == CMD_CCP_INVALID) {
+					System.err.println("Invalid command");
+					return;
+				}
 				lastResponse = frame;
 				commandPending = false;
 				
 				// wake up the query thread
-				if (
-					queryThread != null && queryThread.getState() == Thread.State.WAITING
-				)
+				if (queryThread != null)
 					queryThread.interrupt();
 			}
 		});
@@ -176,7 +178,8 @@ public class KBL96151
 			return nameGood;
 		}
 		catch (TimeoutException e) {
-			return false;
+			//return false;
+			throw new IOException(e);
 		}
 	}
 	
@@ -238,7 +241,7 @@ public class KBL96151
 		canBus.sendFrame(frame);
 		
 		try {
-			Thread.currentThread().wait(RESPONSE_TIMEOUT);
+			Thread.sleep(RESPONSE_TIMEOUT);
 		}
 		catch (InterruptedException e) {
 			// We (should have) gotten a response. Double check to be sure

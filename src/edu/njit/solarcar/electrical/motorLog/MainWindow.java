@@ -422,12 +422,20 @@ public class MainWindow
 	 */
 	private void setNoConnectionUI() {
 		canIdLabel.setText("N/A");
+		logTimeLabel.setText("N/A");
 		rpmLabel.setText("-");
+		throttleLabel.setText("-");
+		
 		vbatLabel.setText("-");
+		phaseAVoltageLabel.setText("-");
+		phaseBVoltageLabel.setText("-");
+		phaseCVoltageLabel.setText("-");
+		totalVoltagelabel.setText("-");
+		
 		totalCurrentLabel.setText("-");
 		phaseACurrentLabel.setText("-");
 		phaseBCurrentLabel.setText("-");
-		phaseBCurrentLabel.setText("-");
+		phaseCCurrentLabel.setText("-");
 	}
 	
 	
@@ -584,7 +592,6 @@ public class MainWindow
 		if (port != null) {
 			ConfigData d = AppController.readConfig();
 			try {
-				AppController.getComController().setConf(d);
 				if(!AppController.getComController().startPolling(port)) {
 					throw new IOException("Motor failed to respond");
 				}

@@ -51,9 +51,10 @@ public class SerialCAN implements CANBus
 		
 		// Open the port
 		try {
-			port.setParams(baud, 8, 1, 0);
 			if (!port.openPort())
 				throw new IOException("Failed to open serial port!");
+			port.setParams(baud, 8, 1, 0, false, false);
+			port.setFlowControlMode(SerialPort.FLOWCONTROL_NONE);
 			
 			// Reset the device, giving it some time to clear itself
 			port.writeString("\r\r\r\rC\r");
@@ -61,6 +62,7 @@ public class SerialCAN implements CANBus
 			port.readBytes();
 			
 			// Create the listener
+			frameProcs = new HashSet<>();
 			listener = new SerialCanRxListener(frameProcs, port);
 			port.addEventListener(listener);
 			
@@ -72,23 +74,17 @@ public class SerialCAN implements CANBus
 			// Set speed
 			port.writeString(bitrate.toString());
 			port.writeByte((byte) '\r');
-			byte[] r1 = port.readBytes(1, rxTimeout);
-			if (r1[0] != '\r') { throw new IOException(
-				String.format("Bad response 0x%02X from device", r1[0])); }
-			
+	
 			// Start the device
 			port.writeString("O\r");
-			byte[] r2 = port.readBytes(1, rxTimeout);
-			if (r2[0] != '\r') { throw new IOException(
-				String.format("Bad response 0x%02X from device", r2[0])); }
-			
+		
 			// If we get this far, we are connected
 			isConnected = true;
 			
 			// Enable the rx listener
 			setRxInterruptEnable(true);
 		}
-		catch (SerialPortException | SerialPortTimeoutException e) {
+		catch (SerialPortException /*| SerialPortTimeoutException*/ e) {
 			throw new IOException(e);
 		}
 	}
@@ -157,12 +153,12 @@ public class SerialCAN implements CANBus
 		String fmtStr;
 		if (frame.ide)
 			fmtStr = "%08X%01d";
-		else fmtStr = "%04X%01d";
+		else fmtStr = "%03X%01d";
 		buf.append(String.format(fmtStr, frame.id, frame.len));
 		
 		// add data
-		for (byte b : frame.data)
-			buf.append(String.format("%02X", b));
+		for (int i=0; i<frame.len; i++)
+			buf.append(String.format("%02X", frame.data[i]));
 		
 		// terminate
 		buf.append('\r');
@@ -175,14 +171,14 @@ public class SerialCAN implements CANBus
 				throw new IOException("Failed to write frame data to port!");
 			}
 			
-			// Check the response
-			byte[] resp = port.readBytes(2, rxTimeout);
-			if(resp[0] != 'Z' && resp[1] != '\r') {
-				isConnected = false;
-				throw new IOException("Invalid response 0x%02X %02X after packet sent");
-			}
+//			// Check the response
+//			byte[] resp = port.readBytes(1, rxTimeout);
+//			if(resp[0] != '\r') {
+//				isConnected = false;
+//				throw new IOException(String.format("Invalid response 0x%02X %02X (%s) after packet sent", resp[0], resp[1], new String(resp)));
+//			}
 		}
-		catch (SerialPortException | SerialPortTimeoutException e) {
+		catch (SerialPortException /*| SerialPortTimeoutException */e) {
 			isConnected = false;
 			throw new IOException(e);
 		}

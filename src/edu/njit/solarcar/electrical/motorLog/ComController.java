@@ -21,7 +21,6 @@ import javafx.application.Platform;
  */
 public class ComController
 {
-	private static final int BAUD = 250000;
 	
 	private KBL96151 motor;
 	private CANBus bus;
@@ -29,7 +28,6 @@ public class ComController
 	private boolean isLogging = false;
 	
 	private LogData currData;
-	private ConfigData conf;
 	
 	private ScheduledExecutorService motorPollThread;
 
@@ -40,8 +38,7 @@ public class ComController
 	
 	
 	
-	public ComController(ConfigData conf) {
-		this.conf = conf;
+	public ComController() {
 		motorPollThread = Executors.newSingleThreadScheduledExecutor((r) -> {
 			Thread t = new Thread(r);
 			t.setDaemon(true);
@@ -65,7 +62,7 @@ public class ComController
 	private boolean connectToMotor(
 		String canPort, int controllerId, int receiveId
 	) throws IOException {
-		bus = new SerialCAN(canPort, BAUD);
+		bus = new SerialCAN(canPort, AppController.readConfig().baud);
 		bus.connect(CANBitrate.S8);
 		motor = new KBL96151(controllerId, receiveId);
 		return motor.connect(bus);
@@ -75,6 +72,8 @@ public class ComController
 	
 	
 	public boolean startPolling(String canPort) throws IOException {
+		ConfigData conf = AppController.readConfig();
+		
 		if (conf.samplingFreq <= 0)
 			throw new IllegalArgumentException("Polling frequency must be > 0");
 		
@@ -115,7 +114,7 @@ public class ComController
 			KBL96151.AdcBatch2 b2 = motor.readAdcBatch2();
 			KBL96151.Monitor1 m1 = motor.readMonitor1();
 			
-			double rpm = ((double) motor.readElectronicRPM()) / conf.motorPoles;
+			double rpm = ((double) motor.readElectronicRPM()) / AppController.readConfig().motorPoles;
 			double iTotal = phaseToRMS(b2.ia, b2.ib, b2.ic);
 			
 			LogData d = new LogData();
@@ -143,7 +142,7 @@ public class ComController
 	
 	
 	public void startLogging() throws IOException {
-		motLog = MotorLogger.newLogger(conf.logDir);
+		motLog = MotorLogger.newLogger(AppController.readConfig().logDir);
 		isLogging = true;
 	}
 	
@@ -187,11 +186,6 @@ public class ComController
 		return Math.sqrt(ia * ia + ib * ib + ic * ic);
 	}
 	
-	
-	
-	public void setConf(ConfigData conf) {
-		this.conf = conf;
-	}
 	
 	
 	

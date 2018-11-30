@@ -15,4 +15,5 @@ public class ConfigData
 	public int samplePeriod;
 	public File logDir;
 	public int motorPoles;
+	public int baud;
 }

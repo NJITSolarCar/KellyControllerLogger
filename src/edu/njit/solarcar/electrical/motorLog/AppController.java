@@ -25,6 +25,7 @@ public class AppController extends Application
 	public void start(Stage primaryStage) {
 		try {
 			// load default data
+			DEFAULT_DATA.baud = 115200;
 			DEFAULT_DATA.controllerCanId = 0x6B;
 			DEFAULT_DATA.controllerResponseId = 0x73;
 			DEFAULT_DATA.logDir = new File(System.getProperty("user.home"),
@@ -33,10 +34,15 @@ public class AppController extends Application
 			DEFAULT_DATA.samplePeriod = 5;
 			DEFAULT_DATA.samplingFreq = 10;
 			
+			Preferences.userRoot();
 			// Obtain a ref to the config
-			prefs = Preferences.userRoot().node(getClass().getName());
+			prefs = Preferences.userNodeForPackage(AppController.class);
 			
-			comController = new ComController(readConfig());
+			readConfig();
+			comController = new ComController();
+			
+			// verify that the directory exists
+			makeLogDir(config);
 			
 			// Load all the FXMl files
 			FXMLLoader mainWindowLoader = new FXMLLoader(
@@ -48,6 +54,7 @@ public class AppController extends Application
 			scene.getStylesheets()
 				.add(getClass().getResource("application.css").toExternalForm());
 			primaryStage.setScene(scene);
+			primaryStage.setTitle("Motor Controller Analyzer");
 			primaryStage.show();
 		}
 		catch (Exception e) {
@@ -76,8 +83,11 @@ public class AppController extends Application
 	 * @return
 	 */
 	public static ConfigData readConfig() {
-		if(config == null) {
+		if (config == null) {
 			ConfigData d = new ConfigData();
+			
+			d.baud = prefs
+				.getInt("baud", DEFAULT_DATA.baud);
 			
 			d.controllerCanId = prefs
 				.getInt("controllerCanId", DEFAULT_DATA.controllerCanId);
@@ -98,6 +108,7 @@ public class AppController extends Application
 			d.logDir = new File(
 				prefs.get("logDir", DEFAULT_DATA.logDir.getAbsolutePath()));
 			
+			config = d;
 			return d;
 		}
 		
@@ -105,11 +116,16 @@ public class AppController extends Application
 	}
 	
 	
+	
 	/**
 	 * Writes configuration
+	 * 
 	 * @param d
 	 */
 	public static void writeConfig(ConfigData d) {
+		makeLogDir(d);
+		
+		prefs.putInt("baud", d.baud);
 		prefs.putInt("controllerCanId", d.controllerCanId);
 		prefs.putInt("controllerResponseId", d.controllerResponseId);
 		prefs.putDouble("samplingFreq", d.samplingFreq);
@@ -122,6 +138,21 @@ public class AppController extends Application
 
 
 
+	private static void makeLogDir(ConfigData d) {
+		// verify log dir
+		try {
+			d.logDir.mkdirs();
+		}
+		catch (Exception e) {
+			System.err.println(
+				"Tried to set bad log directory \"" + d.logDir.getAbsolutePath()
+					+ "\"");
+			d.logDir = DEFAULT_DATA.logDir;
+		}
+	}
+	
+	
+	
 	public static ComController getComController() {
 		return comController;
 	}

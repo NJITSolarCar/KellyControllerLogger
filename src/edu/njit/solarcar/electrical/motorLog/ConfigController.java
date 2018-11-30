@@ -27,13 +27,16 @@ public class ConfigController
 	private URL location;
 	
 	@FXML
+	private TextField baudField;
+	
+	@FXML
 	private TextField controllerCanIdField;
 	
 	@FXML
 	private TextField controllerResponseIdField;
 	
 	@FXML
-	private TextField samplingRateField;
+	private TextField samplingFreqField;
 	
 	@FXML
 	private TextField samplePeriodField;
@@ -49,7 +52,7 @@ public class ConfigController
 	
 	
 	public static ConfigController getController() {
-		if (impl != null)
+		if (impl == null)
 			impl = new ConfigController();
 		return impl;
 	}
@@ -57,19 +60,18 @@ public class ConfigController
 	
 	
 	private ConfigController() {
-		FXMLLoader ldr = new FXMLLoader(getClass().getResource("Config.fxml"));
+		FXMLLoader ldr = new FXMLLoader();
+		ldr.setController(this);
+		ldr.setLocation(getClass().getResource("Config.fxml"));
 		stage = new Stage();
 		try {
 			stage.setScene(new Scene(ldr.load()));
 		}
 		catch (IOException e) {
-			Alert a = new ExceptionAlert(e, "Failed to load Config view");
+			Alert a = new ExceptionAlert(e, "Failed to load Config View");
 			a.showAndWait();
 		}
-		stage.setOnCloseRequest((event) -> {
-			cancel(null);
-		});
-		impl = ldr.getController();
+		stage.setOnCloseRequest((event) -> stage.close());
 	}
 	
 	
@@ -79,10 +81,11 @@ public class ConfigController
 		
 		// try to parse is
 		try {
+			d.baud = Integer.parseInt(baudField.getText());
 			d.controllerCanId = Integer.decode(controllerCanIdField.getText());
 			d.controllerResponseId = Integer
 				.decode(controllerResponseIdField.getText());
-			d.samplingFreq = Double.parseDouble(samplingRateField.getText());
+			d.samplingFreq = Double.parseDouble(samplingFreqField.getText());
 			d.samplePeriod = Integer.parseInt(samplePeriodField.getText());
 			
 			// This will tell if the path is valid. Will throw an exception if the
@@ -106,11 +109,12 @@ public class ConfigController
 	
 	
 	private void setFields(ConfigData d) {
-		controllerCanIdField.setText(String.format("%x", d.controllerCanId));
+		baudField.setText(String.valueOf(d.baud));
+		controllerCanIdField.setText(String.format("0x%X", d.controllerCanId));
 		controllerResponseIdField
-			.setText(String.format("%x", d.controllerResponseId));
-		samplingRateField.setText(String.format("%f", d.samplingFreq));
-		samplePeriodField.setText(String.format("%d", d.samplePeriod));
+			.setText(String.format("0x%X", d.controllerResponseId));
+		samplingFreqField.setText(String.format("%f", d.samplingFreq));
+		samplePeriodField.setText(String.valueOf(d.samplePeriod));
 		logDirectoryField.setText(d.logDir.getAbsolutePath());
 	}
 	
@@ -138,10 +142,8 @@ public class ConfigController
 	@FXML
 	void save(ActionEvent event) {
 		// if true, the user's data is good, so the dialog can be closed
-		if (
-			parseFields()
-			)
-			cancel(null);
+		if (parseFields())
+			stage.close();
 	}
 	
 	
@@ -157,7 +159,7 @@ public class ConfigController
 	@FXML
 	void browse(ActionEvent event) {
 		DirectoryChooser dc = new DirectoryChooser();
-		File initial = new File(System.getProperty("user.home"));
+		File initial = AppController.readConfig().logDir;
 		
 		// Get the file in the box if it's valid
 		try {
