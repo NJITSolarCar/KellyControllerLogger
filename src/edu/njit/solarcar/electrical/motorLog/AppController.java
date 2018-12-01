@@ -33,6 +33,7 @@ public class AppController extends Application
 			DEFAULT_DATA.motorPoles = 3;
 			DEFAULT_DATA.samplePeriod = 5;
 			DEFAULT_DATA.samplingFreq = 10;
+			DEFAULT_DATA.plotTime = 10;
 			
 			Preferences.userRoot();
 			// Obtain a ref to the config
@@ -60,6 +61,14 @@ public class AppController extends Application
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	
+	@Override
+	public void stop() throws Exception {
+		super.stop();
+		comController.stopPolling();
+		System.exit(0);
 	}
 	
 	
@@ -104,6 +113,9 @@ public class AppController extends Application
 			d.motorPoles = prefs
 				.getInt("motorPoles", DEFAULT_DATA.motorPoles);
 			
+			d.plotTime = prefs
+				.getDouble("plotTime", DEFAULT_DATA.plotTime);
+			
 			// Handle root dir differently because we can't work straight with objects
 			d.logDir = new File(
 				prefs.get("logDir", DEFAULT_DATA.logDir.getAbsolutePath()));
@@ -132,6 +144,7 @@ public class AppController extends Application
 		prefs.putInt("samplePeriod", d.samplePeriod);
 		prefs.put("logDir", d.logDir.getAbsolutePath());
 		prefs.putInt("motorPoles", d.motorPoles);
+		prefs.putDouble("plotTime", d.plotTime);
 		
 		config = d;
 	}

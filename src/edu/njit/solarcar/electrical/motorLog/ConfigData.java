@@ -16,4 +16,5 @@ public class ConfigData
 	public File logDir;
 	public int motorPoles;
 	public int baud;
+	public double plotTime;
 }

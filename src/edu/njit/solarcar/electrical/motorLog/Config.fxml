@@ -44,6 +44,18 @@
                   <TextField fx:id="samplePeriodField" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
+            <HBox layoutX="20.0" layoutY="180.0" maxWidth="1.7976931348623157E308">
+               <children>
+                  <Label maxHeight="1.7976931348623157E308" text="Plot Time Shown: " />
+                  <TextField fx:id="plotTimeField" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+            <HBox layoutX="20.0" layoutY="220.0" maxWidth="1.7976931348623157E308">
+               <children>
+                  <Label maxHeight="1.7976931348623157E308" text="Motor Poles: " />
+                  <TextField fx:id="motorPolesField" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
             <HBox layoutX="20.0" layoutY="60.0" maxWidth="1.7976931348623157E308">
                <children>
                   <Label maxHeight="1.7976931348623157E308" text="Log Directory: " />

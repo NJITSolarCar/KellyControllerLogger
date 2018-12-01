@@ -166,12 +166,13 @@ public class SerialCAN implements CANBus
 		// Send. Momentarily disable the receive loop to manually inspect the response
 		setRxInterruptEnable(false);
 		try {
+			System.out.println("Send: " +buf.toString());
 			if ( !port.writeString(buf.toString()) ) {
 				isConnected = false;
 				throw new IOException("Failed to write frame data to port!");
 			}
 			
-//			// Check the response
+			// Check the response
 //			byte[] resp = port.readBytes(1, rxTimeout);
 //			if(resp[0] != '\r') {
 //				isConnected = false;
@@ -190,7 +191,7 @@ public class SerialCAN implements CANBus
 	@Override
 	public void disconnect() throws IOException {
 		isConnected = false;
-		if ( port != null ) {
+		if ( port != null  && port.isOpened()) {
 			try {
 				port.writeString("C\r");
 				port.closePort();

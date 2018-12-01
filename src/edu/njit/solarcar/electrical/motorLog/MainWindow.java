@@ -5,7 +5,6 @@ import edu.njit.solarcar.electrical.motorLog.util.ExceptionAlert;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -22,76 +21,7 @@ import javafx.util.Duration;
 public class MainWindow
 {
 	
-	/*@FXML
-	private LineChart<Number, Number> rpmChart;
-	
-	@FXML
-	private NumberAxis rpmChartAxisT;
-	
-	@FXML
-	private NumberAxis rpmChartAxisY;
-	
-	@FXML
-	private LineChart<Number, Number> vBatChart;
-	
-	@FXML
-	private NumberAxis vBatChartAxisT;
-	
-	@FXML
-	private NumberAxis vBatChartAxisY;
-	
-	@FXML
-	private Label rpmLabel;
-	
-	@FXML
-	private Label totalCurrentLabel;
-	
-	@FXML
-	private Label phaseACurrentLabel;
-	
-	@FXML
-	private Label phaseBCurrentLabel;
-	
-	@FXML
-	private Label phaseCCurrentLabel;
-	
-	@FXML
-	private LineChart<Number, Number> currentChart;
-	
-	@FXML
-	private NumberAxis currentChartAxisT;
-	
-	@FXML
-	private NumberAxis currentChartAxisY;
-	
-	@FXML
-	private CheckBox totalCurrentCheck;
-	
-	@FXML
-	private CheckBox phaseACurrentCheck;
-	
-	@FXML
-	private CheckBox phaseBCurrentCheck;
-	
-	@FXML
-	private CheckBox phaseCCurrentCheck;
-	
-	@FXML
-	private Label comPortLabel;
-	
-	@FXML
-	private Label canIdLabel;
-	
-	@FXML
-	private Label vbatLabel;
-	
-	@FXML
-	private Label logFileLabel;
-	
-	@FXML
-	private Label logTimeLabel;*/
-	
-  private static final double GRAPH_TIME_SHOWN = 10.0;
+  private static final int UI_UPDATE_MILLIS = 50;
 
 	@FXML
   private Label rpmLabel;
@@ -202,20 +132,20 @@ public class MainWindow
   private Label logTimeLabel;
 	
 	// Other parameters
-	private XYChart.Series<Number, Number> currentSeriesTotal;
-	private XYChart.Series<Number, Number> currentSeriesA;
-	private XYChart.Series<Number, Number> currentSeriesB;
-	private XYChart.Series<Number, Number> currentSeriesC;
+	private XYChart.Series<Number, Number> currentSeriesTotal = new XYChart.Series<>();
+	private XYChart.Series<Number, Number> currentSeriesA = new XYChart.Series<>();
+	private XYChart.Series<Number, Number> currentSeriesB = new XYChart.Series<>();
+	private XYChart.Series<Number, Number> currentSeriesC = new XYChart.Series<>();
 	
-	private XYChart.Series<Number, Number> voltageSeriesTotal;
-	private XYChart.Series<Number, Number> voltageSeriesA;
-	private XYChart.Series<Number, Number> voltageSeriesB;
-	private XYChart.Series<Number, Number> voltageSeriesC;
-	private XYChart.Series<Number, Number> voltageSeriesBat;
+	private XYChart.Series<Number, Number> voltageSeriesTotal = new XYChart.Series<>();
+	private XYChart.Series<Number, Number> voltageSeriesA = new XYChart.Series<>();
+	private XYChart.Series<Number, Number> voltageSeriesB = new XYChart.Series<>();
+	private XYChart.Series<Number, Number> voltageSeriesC = new XYChart.Series<>();
+	private XYChart.Series<Number, Number> voltageSeriesBat = new XYChart.Series<>();
 	
-	private XYChart.Series<Number, Number> rpmSeries;
+	private XYChart.Series<Number, Number> rpmSeries = new XYChart.Series<>();
 	
-	private XYChart.Series<Number, Number> throttleSeries;
+	private XYChart.Series<Number, Number> throttleSeries = new XYChart.Series<>();
 	
 	
 	private double xRange;
@@ -230,7 +160,7 @@ public class MainWindow
 		// Set the x axis range
 		if (t > xRange) {
 			currentChartAxisT.setLowerBound(t - xRange);
-			currentChartAxisT.setUpperBound(t - xRange);
+			currentChartAxisT.setUpperBound(t);
 		}
 		
 		// Update each series on the chart
@@ -256,10 +186,10 @@ public class MainWindow
 			listTotal.remove(0);
 		
 		// Update the labels
-		totalCurrentLabel.setText(String.valueOf(iTotal));
-		phaseACurrentLabel.setText(String.valueOf(iA));
-		phaseBCurrentLabel.setText(String.valueOf(iB));
-		phaseCCurrentLabel.setText(String.valueOf(iC));
+		totalCurrentLabel.setText(String.format("%.01f", iTotal));
+		phaseACurrentLabel.setText(String.format("%.01f", iA));
+		phaseBCurrentLabel.setText(String.format("%.01f", iB));
+		phaseCCurrentLabel.setText(String.format("%.01f", iC));
 	}
 	
 	
@@ -269,7 +199,7 @@ public class MainWindow
 		// Set the x axis range
 		if (t > xRange) {
 			voltageChartAxisT.setLowerBound(t - xRange);
-			voltageChartAxisT.setUpperBound(t - xRange);
+			voltageChartAxisT.setUpperBound(t);
 		}
 		
 		// update each series
@@ -300,12 +230,12 @@ public class MainWindow
 			listTotal.remove(0);
 		
 		// Update the labels
-		totalVoltagelabel.setText(String.valueOf(vTotal));
-		phaseAVoltageLabel.setText(String.valueOf(vA));
-		phaseBVoltageLabel.setText(String.valueOf(vB));
-		phaseCVoltageLabel.setText(String.valueOf(vC));
+		totalVoltagelabel.setText(String.format("%.01f", vTotal));
+		phaseAVoltageLabel.setText(String.format("%.01f", vA));
+		phaseBVoltageLabel.setText(String.format("%.01f", vB));
+		phaseCVoltageLabel.setText(String.format("%.01f", vC));
 		
-		vbatLabel.setText(String.valueOf(vBat));
+		vbatLabel.setText(String.format("%.01f", vBat));
 	}
 	
 	
@@ -314,7 +244,7 @@ public class MainWindow
 		// Set the x axis range
 		if (t > xRange) {
 			throttleChartAxisT.setLowerBound(t - xRange);
-			throttleChartAxisT.setUpperBound(t - xRange);
+			throttleChartAxisT.setUpperBound(t);
 		}
 		
 		ObservableList<Data<Number, Number>> list = throttleSeries.getData();
@@ -322,7 +252,7 @@ public class MainWindow
 		if (list.size() > numSamplesShown)
 			list.remove(0);
 		
-		throttleLabel.setText(String.valueOf(throttle));
+		throttleLabel.setText(String.format("%.02f", throttle));
 	}
 	
 	
@@ -333,7 +263,7 @@ public class MainWindow
 		// Set the x axis range
 		if (t > xRange) {
 			rpmChartAxisT.setLowerBound(t - xRange);
-			rpmChartAxisT.setUpperBound(t - xRange);
+			rpmChartAxisT.setUpperBound(t);
 		}
 		
 		ObservableList<Data<Number, Number>> list = rpmSeries.getData();
@@ -341,7 +271,7 @@ public class MainWindow
 		if (list.size() > numSamplesShown)
 			list.remove(0);
 		
-		rpmLabel.setText(String.valueOf(rpm));
+		rpmLabel.setText(String.format("%.01f", rpm));
 	}
 	
 	
@@ -402,9 +332,7 @@ public class MainWindow
 		
 		if(ctrl.isLogging()) {
 			String logFile = ctrl.logFile().getAbsolutePath();
-			double timeLogging = 
-				((double)(System.currentTimeMillis() - ctrl.getLogStart()))
-				/ 1000.0;
+			double timeLogging = ((double)ctrl.getLogRunningTime()) / 1000.0;
 			
 			logFileLabel.setText(logFile);
 			logTimeLabel.setText(String.format("%.01f", timeLogging));
@@ -443,24 +371,105 @@ public class MainWindow
 	 * Updates teh number of samples shown on the graphs
 	 * @param d
 	 */
-	private void updateNumSamples(ConfigData d) {
-		numSamplesShown = (int) (d.samplingFreq * GRAPH_TIME_SHOWN);
+	private void updateFromSettings(ConfigData d) {
+		numSamplesShown = (int) (d.plotTime * 1000.0/UI_UPDATE_MILLIS);
+		xRange = d.plotTime;
+	}
+	
+	
+	
+	private void initTimeAxis(NumberAxis axis) {
+		axis.setLabel("Time");
+		axis.setForceZeroInRange(false);
+		axis.setAutoRanging(false);
+		axis.setLowerBound(0);
+		axis.setUpperBound(xRange);
+		axis.setTickUnit(numSamplesShown / 5);
+	}
+	
+	
+	
+	private void initYAxis(NumberAxis axis, double lower, double upper, String label) {
+		axis.setLabel(label);
+		axis.setAutoRanging(false);
+		axis.setForceZeroInRange(false);
+		axis.setLowerBound(lower);
+		axis.setUpperBound(upper);
+		axis.setTickUnit((upper - lower) / 5);
 	}
 	
 	
 	
 	
+	private void initChart(LineChart<?,?> chart) {
+		chart.setCreateSymbols(false);
+		chart.animatedProperty().set(false);
+		chart.setLegendVisible(false);
+	}
+	
+	
+	
+	@SuppressWarnings ("unchecked")
 	@FXML
 	void initialize() 
 	{
-		// initialize some stuff
+		// initialize misc things
 		ConfigData d = AppController.readConfig();
-		updateNumSamples(d);
+		updateFromSettings(d);
 		setNoConnectionUI();
+		xRange = d.plotTime;
+		
+		// Initialize each chart
+		initChart(currentChart);
+		initChart(voltageChart);
+		initChart(rpmChart);
+		initChart(throttleChart);
+		
+		// initialize T axes
+		initTimeAxis(currentChartAxisT);
+		initTimeAxis(voltageChartAxisT);
+		initTimeAxis(rpmChartAxisT);
+		initTimeAxis(throttleChartAxisT);
+		
+		// initialize Y axes
+		initYAxis(currentChartAxisY, 0, 150, "Amps");
+		initYAxis(voltageChartAxisY, 0, 100, "Volts");
+		initYAxis(rpmChartAxisY, 0, 500, "RPM");
+		initYAxis(throttleChartAxisY, 0, 5, "Volts");
+		
+		// Add series
+		currentSeriesTotal.setName("currentTotal");
+		currentSeriesA.setName("currentA");
+		currentSeriesB.setName("currentB");
+		currentSeriesC.setName("currentC");
+		
+		currentChart.getData().addAll(
+			currentSeriesTotal,
+			currentSeriesA, 
+			currentSeriesB, 
+			currentSeriesC); 
+		
+		
+		voltageSeriesTotal.setName("voltageTotal");
+		voltageSeriesA.setName("voltageA");
+		voltageSeriesB.setName("voltageB");
+		voltageSeriesC.setName("voltageC");
+		voltageSeriesBat.setName("voltageBat");
+		
+		voltageChart.getData().addAll(
+			voltageSeriesTotal,
+			voltageSeriesA, 
+			voltageSeriesB, 
+			voltageSeriesC, 
+			voltageSeriesBat);
+		
+		
+		throttleChart.getData().add(throttleSeries);
+		rpmChart.getData().add(rpmSeries);
 		
 		// Set up the UI updating task
 		Timeline uiUpdater = new Timeline(
-			new KeyFrame(Duration.millis(25), new EventHandler<ActionEvent>() {
+			new KeyFrame(Duration.millis(UI_UPDATE_MILLIS), new EventHandler<ActionEvent>() {
 
 				@Override
 				public void handle(ActionEvent event) {
@@ -486,34 +495,26 @@ public class MainWindow
 		boolean showTotal = totalCurrentCheck.isSelected();
 		if (showTotal && lines.get(0) != currentSeriesTotal)
 			lines.set(0, currentSeriesTotal);
-		else if (
-			!showTotal && lines.get(0) == currentSeriesTotal
-			)
+		else if (!showTotal && lines.get(0) == currentSeriesTotal)
 			lines.set(0, new XYChart.Series<>());
 		
 		boolean showA = phaseACurrentCheck.isSelected();
 		if (showA && lines.get(1) != currentSeriesA)
-			lines.set(0, currentSeriesA);
-		else if (
-			!showA && lines.get(1) == currentSeriesA
-			)
-			lines.set(0, new XYChart.Series<>());
+			lines.set(1, currentSeriesA);
+		else if (!showA && lines.get(1) == currentSeriesA)
+			lines.set(1, new XYChart.Series<>());
 		
 		boolean showB = phaseBCurrentCheck.isSelected();
 		if (showB && lines.get(2) != currentSeriesB)
-			lines.set(0, currentSeriesB);
-		else if (
-			!showB && lines.get(2) == currentSeriesB
-			)
-			lines.set(0, new XYChart.Series<>());
+			lines.set(2, currentSeriesB);
+		else if (!showB && lines.get(2) == currentSeriesB)
+			lines.set(2, new XYChart.Series<>());
 		
 		boolean showC = phaseCCurrentCheck.isSelected();
 		if (showC && lines.get(3) != currentSeriesC)
-			lines.set(0, currentSeriesC);
-		else if (
-			!showC && lines.get(3) == currentSeriesC
-			)
-			lines.set(0, new XYChart.Series<>());
+			lines.set(3, currentSeriesC);
+		else if (!showC && lines.get(3) == currentSeriesC)
+			lines.set(3, new XYChart.Series<>());
 	}
 	
 	
@@ -550,9 +551,9 @@ public class MainWindow
 			lines.set(3, new XYChart.Series<>());
 		
 		boolean showBat = vBatCheck.isSelected();
-		if (showBat && lines.get(3) != voltageSeriesBat)
+		if (showBat && lines.get(4) != voltageSeriesBat)
 			lines.set(4, voltageSeriesBat);
-		else if (!showBat && lines.get(3) == voltageSeriesBat)
+		else if (!showBat && lines.get(4) == voltageSeriesBat)
 			lines.set(4, new XYChart.Series<>());
 	}
 	
@@ -590,11 +591,11 @@ public class MainWindow
 	void connectToController(ActionEvent event) {
 		String port = CanConnectController.getController().promptSelectPort();
 		if (port != null) {
-			ConfigData d = AppController.readConfig();
 			try {
 				if(!AppController.getComController().startPolling(port)) {
 					throw new IOException("Motor failed to respond");
 				}
+				clearCharts(null);
 			}
 			catch (IOException e) {
 				e.printStackTrace();
@@ -620,7 +621,7 @@ public class MainWindow
 		ConfigData newData = ConfigController.getController().promptConfig(old);
 		if(newData != null) {
 			AppController.writeConfig(newData);
-			updateNumSamples(newData);
+			updateFromSettings(newData);
 		}
 	}
 	
@@ -649,7 +650,7 @@ public class MainWindow
 
 
 	/**
-	 * Called when a polling error has occured, and the polling loop has stopped
+	 * Called when a polling error has occurred, and the polling loop has stopped
 	 */
 	public void pollingError(Exception e) {
 		e.printStackTrace();
@@ -658,3 +659,5 @@ public class MainWindow
 	}
 	
 }
+
+

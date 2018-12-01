@@ -27,7 +27,7 @@ public class ComController
 	private MotorLogger motLog;
 	private boolean isLogging = false;
 	
-	private LogData currData;
+	private LogData currData = new LogData();
 	
 	private ScheduledExecutorService motorPollThread;
 
@@ -90,18 +90,20 @@ public class ComController
 		pollingStart = System.currentTimeMillis();
 		
 		motorPollThread.scheduleAtFixedRate(() -> {
-			try {
-				currData = poll();
-				if (isLogging)
-					motLog.writeRow(currData);
+			if(isPolling) {
+				try {
+					currData = poll();
+					if (isLogging)
+						motLog.writeRow(currData);
+				}
+				catch (IOException e) {
+					Platform.runLater(
+						() -> AppController.getMainWindowController().pollingError(e)
+					);
+					stopPolling();
+				}
 			}
-			catch (IOException e) {
-				Platform.runLater(
-					() -> AppController.getMainWindowController().pollingError(e)
-				);
-				stopPolling();
-			}
-		}, pollRate, pollRate, TimeUnit.MILLISECONDS);
+		}, 0, pollRate, TimeUnit.MILLISECONDS);
 		
 		return true;
 	}
@@ -149,7 +151,8 @@ public class ComController
 	
 	
 	public void stopLogging() {
-		motLog.close();
+		if(motLog != null)
+			motLog.close();
 		isLogging = false;
 	}
 	
@@ -158,11 +161,15 @@ public class ComController
 	public void stopPolling() {
 		try {
 			isPolling = false;
-			bus.disconnect();
 			stopLogging();
-			motorPollThread.shutdownNow();
+			
+			// Wait some time to let the rest of the system clear up
+			Thread.sleep(KBL96151.RESPONSE_TIMEOUT + 100);
+			
+			if(bus != null)
+				bus.disconnect();
 		}
-		catch (IOException e) {
+		catch (IOException | InterruptedException e) {
 			System.err.println("Exception stopping polling");
 			e.printStackTrace();
 		}
@@ -222,7 +229,7 @@ public class ComController
 	}
 	
 	
-	public long getLogStart() {
+	public long getLogRunningTime() {
 		return motLog.getMillisRunning();
 	}
 	

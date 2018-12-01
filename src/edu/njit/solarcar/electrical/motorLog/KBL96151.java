@@ -47,15 +47,13 @@ public class KBL96151
 	public static final byte FLASH_CAL_BRAKE_DEAD_ZONE_HIGH_LEN = (byte) 1;
 	
 	// Application parameters
-	public static final int RESPONSE_TIMEOUT = 1000;
+	public static final int RESPONSE_TIMEOUT = 250;
 	public static final double VOLTAGE_SCALAR = 1 / 1.84;
 	
 	private CANBus canBus;
 	private int controllerCanId;
 	private int responseCanId;
 	
-	// State parameters
-	private byte lastCommand;
 	private CANFrame lastResponse;
 	private boolean commandPending;
 	private Thread queryThread;
@@ -152,10 +150,10 @@ public class KBL96151
 		// Add the frame processor. If it gets a response command
 		canBus.frameProcessors().add((frame) -> {
 			if (frame.id == responseCanId) {
-				if(frame.data[0] == CMD_CCP_INVALID) {
+				/*if(frame.data[0] == CMD_CCP_INVALID) {
 					System.err.println("Invalid command");
 					return;
-				}
+				}*/
 				lastResponse = frame;
 				commandPending = false;
 				
@@ -232,8 +230,6 @@ public class KBL96151
 			frame.len = (byte) (1 + data.length);
 		}
 		
-		// Prepare state
-		lastCommand = command;
 		commandPending = true;
 		queryThread = Thread.currentThread();
 		
@@ -305,11 +301,11 @@ public class KBL96151
 		CANFrame frame = query(CMD_CCP_A2D_BATCH_READ1);
 		AdcBatch1 val = new AdcBatch1();
 		
-		val.brake = ((double) frame.data[0]) * (5.0 / 255.0);
-		val.throttle = ((double) frame.data[1]) * (5.0 / 255.0);
-		val.vOperating = ((double) frame.data[2]) * VOLTAGE_SCALAR;
-		val.vs = ((double) frame.data[3] - 120) * (5.25 - 4.75) + 4.75;
-		val.vBat = ((double) frame.data[4]) * VOLTAGE_SCALAR;
+		val.brake = ((double) Byte.toUnsignedInt(frame.data[0])) * (5.0 / 255.0);
+		val.throttle = ((double) Byte.toUnsignedInt(frame.data[1])) * (5.0 / 255.0);
+		val.vOperating = ((double) Byte.toUnsignedInt(frame.data[2])) * VOLTAGE_SCALAR;
+		val.vs = ((double) Byte.toUnsignedInt(frame.data[3]) - 120) * (5.25 - 4.75) + 4.75;
+		val.vBat = ((double) Byte.toUnsignedInt(frame.data[4])) * VOLTAGE_SCALAR;
 		
 		return val;
 	}
@@ -327,13 +323,13 @@ public class KBL96151
 		CANFrame frame = query(CMD_CCP_A2D_BATCH_READ2);
 		AdcBatch2 val = new AdcBatch2();
 		
-		val.ia = frame.data[0];
-		val.ib = frame.data[1];
-		val.ic = frame.data[2];
+		val.ia = Byte.toUnsignedInt(frame.data[0]);
+		val.ib = Byte.toUnsignedInt(frame.data[1]);
+		val.ic = Byte.toUnsignedInt(frame.data[2]);
 		
-		val.va = ((double) frame.data[3]) * VOLTAGE_SCALAR;
-		val.vb = ((double) frame.data[4]) * VOLTAGE_SCALAR;
-		val.vc = ((double) frame.data[5]) * VOLTAGE_SCALAR;
+		val.va = ((double) Byte.toUnsignedInt(frame.data[3])) * VOLTAGE_SCALAR;
+		val.vb = ((double) Byte.toUnsignedInt(frame.data[4])) * VOLTAGE_SCALAR;
+		val.vc = ((double) Byte.toUnsignedInt(frame.data[5])) * VOLTAGE_SCALAR;
 		
 		return val;
 	}
@@ -343,12 +339,12 @@ public class KBL96151
 		CANFrame frame = query(CMD_CCP_MONITOR1);
 		Monitor1 val = new Monitor1();
 		
-		val.pwm = ((double)frame.data[0]) / 100;
+		val.pwm = ((double)Byte.toUnsignedInt(frame.data[0])) / 100;
 		val.motorEnabled = frame.data[1] != 0;
-		val.motorTemp = frame.data[2];
-		val.controllerTemp = frame.data[3];
-		val.fetmosHiTemp = frame.data[4];
-		val.fetmosLowTemp = frame.data[5];
+		val.motorTemp = Byte.toUnsignedInt(frame.data[2]);
+		val.controllerTemp = Byte.toUnsignedInt(frame.data[3]);
+		val.fetmosHiTemp = Byte.toUnsignedInt(frame.data[4]);
+		val.fetmosLowTemp = Byte.toUnsignedInt(frame.data[5]);
 		
 		return val;
 	}

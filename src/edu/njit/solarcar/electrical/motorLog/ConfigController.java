@@ -44,6 +44,12 @@ public class ConfigController
 	@FXML
 	private TextField logDirectoryField;
 	
+	@FXML
+	private TextField plotTimeField;
+	
+	@FXML
+	private TextField motorPolesField;
+	
 	private static ConfigController impl;
 	private Stage stage;
 	private ConfigData selection;
@@ -87,6 +93,8 @@ public class ConfigController
 				.decode(controllerResponseIdField.getText());
 			d.samplingFreq = Double.parseDouble(samplingFreqField.getText());
 			d.samplePeriod = Integer.parseInt(samplePeriodField.getText());
+			d.motorPoles = Integer.parseInt(motorPolesField.getText());
+			d.plotTime = Double.parseDouble(plotTimeField.getText());
 			
 			// This will tell if the path is valid. Will throw an exception if the
 			// path is bad. NOTE: doesn't work in linux
@@ -113,8 +121,10 @@ public class ConfigController
 		controllerCanIdField.setText(String.format("0x%X", d.controllerCanId));
 		controllerResponseIdField
 			.setText(String.format("0x%X", d.controllerResponseId));
-		samplingFreqField.setText(String.format("%f", d.samplingFreq));
+		samplingFreqField.setText(String.format("%.1f", d.samplingFreq));
 		samplePeriodField.setText(String.valueOf(d.samplePeriod));
+		motorPolesField.setText(String.valueOf(d.motorPoles));
+		plotTimeField.setText(String.valueOf(d.plotTime));
 		logDirectoryField.setText(d.logDir.getAbsolutePath());
 	}
 	

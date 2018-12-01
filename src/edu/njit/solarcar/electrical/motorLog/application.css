@@ -2,4 +2,4 @@
 .default-color1.chart-series-line { -fx-stroke: #ff0000; -fx-stroke-width: 1px; }
 .default-color2.chart-series-line { -fx-stroke: #007f00; -fx-stroke-width: 1px; }
 .default-color3.chart-series-line { -fx-stroke: #0000ff; -fx-stroke-width: 1px; }
-.default-color3.chart-series-line { -fx-stroke: #000000; -fx-stroke-width: 1px; }
+.default-color4.chart-series-line { -fx-stroke: #000000; -fx-stroke-width: 1px; }
