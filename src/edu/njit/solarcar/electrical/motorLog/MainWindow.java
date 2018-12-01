@@ -22,6 +22,12 @@ public class MainWindow
 {
 	
   private static final int UI_UPDATE_MILLIS = 50;
+  
+	@FXML
+  private Label tMotLabel;
+
+  @FXML
+  private Label tControllerLabel;
 
 	@FXML
   private Label rpmLabel;
@@ -323,6 +329,10 @@ public class MainWindow
 			// Also set the CAN id label here
 			String canId = ctrl.getBus().getAddress();
 			canIdLabel.setText(canId);
+			
+			// Set Temperature Labels
+			tMotLabel.setText(String.format("%.00f", d.motorTemp));
+			tControllerLabel.setText(String.format("%.00f", d.controllerTemp));
 		} 
 		
 		// Set some informative constants if not connected to hint the user
@@ -353,6 +363,8 @@ public class MainWindow
 		logTimeLabel.setText("N/A");
 		rpmLabel.setText("-");
 		throttleLabel.setText("-");
+		tMotLabel.setText("-");
+		tControllerLabel.setText("-");
 		
 		vbatLabel.setText("-");
 		phaseAVoltageLabel.setText("-");
@@ -368,12 +380,18 @@ public class MainWindow
 	
 	
 	/**
-	 * Updates teh number of samples shown on the graphs
+	 * Updates the number of samples shown on the graphs
 	 * @param d
 	 */
 	private void updateFromSettings(ConfigData d) {
 		numSamplesShown = (int) (d.plotTime * 1000.0/UI_UPDATE_MILLIS);
 		xRange = d.plotTime;
+		
+		// Change y axis scales as needed
+		currentChartAxisY.setUpperBound(d.currentChartScale);
+		voltageChartAxisY.setUpperBound(d.voltageChartScale);
+		rpmChartAxisY.setUpperBound(d.rpmChartScale);
+		
 	}
 	
 	
@@ -419,23 +437,13 @@ public class MainWindow
 		setNoConnectionUI();
 		xRange = d.plotTime;
 		
-		// Initialize each chart
-		initChart(currentChart);
-		initChart(voltageChart);
-		initChart(rpmChart);
-		initChart(throttleChart);
-		
-		// initialize T axes
-		initTimeAxis(currentChartAxisT);
-		initTimeAxis(voltageChartAxisT);
-		initTimeAxis(rpmChartAxisT);
-		initTimeAxis(throttleChartAxisT);
+		resetChartTime();
 		
 		// initialize Y axes
-		initYAxis(currentChartAxisY, 0, 150, "Amps");
-		initYAxis(voltageChartAxisY, 0, 100, "Volts");
-		initYAxis(rpmChartAxisY, 0, 500, "RPM");
-		initYAxis(throttleChartAxisY, 0, 5, "Volts");
+		initYAxis(currentChartAxisY, 0, d.currentChartScale, "Amps");
+		initYAxis(voltageChartAxisY, 0, d.voltageChartScale, "Volts");
+		initYAxis(rpmChartAxisY, 0, d.rpmChartScale, "RPM");
+		initYAxis(throttleChartAxisY, 0, 5, "Volts"); // this one is static
 		
 		// Add series
 		currentSeriesTotal.setName("currentTotal");
@@ -480,6 +488,23 @@ public class MainWindow
 		
 		uiUpdater.setCycleCount(Timeline.INDEFINITE);
 		uiUpdater.play();
+	}
+
+
+
+
+	public void resetChartTime() {
+		// Initialize each chart
+		initChart(currentChart);
+		initChart(voltageChart);
+		initChart(rpmChart);
+		initChart(throttleChart);
+		
+		// initialize T axes
+		initTimeAxis(currentChartAxisT);
+		initTimeAxis(voltageChartAxisT);
+		initTimeAxis(rpmChartAxisT);
+		initTimeAxis(throttleChartAxisT);
 	}
 	
 	
@@ -565,6 +590,8 @@ public class MainWindow
 	 */
 	@FXML
 	void clearCharts(ActionEvent event) {
+		resetChartTime();
+		
 		currentSeriesTotal.getData().clear();
 		currentSeriesA.getData().clear();
 		currentSeriesB.getData().clear();

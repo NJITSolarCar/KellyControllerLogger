@@ -34,27 +34,47 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="10.0" text="Current:">
+                        <Label layoutX="10.0" layoutY="10.0" text="Tmot°: ">
                            <font>
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <Label fx:id="totalCurrentLabel" alignment="CENTER" layoutX="65.0" layoutY="10.0" minWidth="-Infinity" prefWidth="150.0" text="0.0" textAlignment="CENTER" textFill="#f600ff">
+                        <Label fx:id="tMotLabel" layoutX="61.0" layoutY="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="150.0" text="0.0">
                            <font>
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <Label fx:id="phaseACurrentLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="379.0" layoutY="10.0" minWidth="-Infinity" prefWidth="150.0" text="0.0" textAlignment="CENTER" textFill="RED">
+                        <Label layoutX="10.0" layoutY="10.0" text="Tcontroller°: ">
                            <font>
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <Label fx:id="phaseBCurrentLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="602.0" layoutY="10.0" minWidth="-Infinity" prefWidth="150.0" text="0.0" textAlignment="CENTER" textFill="#007f00">
+                        <Label fx:id="tControllerLabel" layoutX="613.0" layoutY="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="150.0" text="0.0">
                            <font>
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <Label fx:id="phaseCCurrentLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="602.0" layoutY="10.0" minWidth="-Infinity" prefWidth="150.0" text="0.0" textAlignment="CENTER" textFill="BLUE">
+                        <Label layoutX="773.0" layoutY="10.0" text="Current:">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="totalCurrentLabel" alignment="CENTER" layoutX="65.0" layoutY="10.0" minWidth="-Infinity" prefWidth="100.0" text="0.0" textAlignment="CENTER" textFill="#f600ff">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="phaseACurrentLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="379.0" layoutY="10.0" minWidth="-Infinity" prefWidth="100.0" text="0.0" textAlignment="CENTER" textFill="RED">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="phaseBCurrentLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="602.0" layoutY="10.0" minWidth="-Infinity" prefWidth="100.0" text="0.0" textAlignment="CENTER" textFill="#007f00">
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="phaseCCurrentLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="602.0" layoutY="10.0" minWidth="-Infinity" prefWidth="100.0" text="0.0" textAlignment="CENTER" textFill="BLUE">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -79,7 +99,7 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <Label fx:id="vbatLabel" layoutX="75.0" layoutY="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="120.0" text="0.0">
+                        <Label fx:id="vbatLabel" layoutX="75.0" layoutY="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="100.0" text="0.0">
                            <font>
                               <Font size="18.0" />
                            </font>
@@ -89,22 +109,22 @@
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <Label fx:id="totalVoltagelabel" alignment="CENTER" layoutX="65.0" layoutY="10.0" minWidth="-Infinity" prefWidth="150.0" text="0.0" textAlignment="CENTER" textFill="#f600ff">
+                        <Label fx:id="totalVoltagelabel" alignment="CENTER" layoutX="65.0" layoutY="10.0" minWidth="-Infinity" prefWidth="100.0" text="0.0" textAlignment="CENTER" textFill="#f600ff">
                            <font>
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <Label fx:id="phaseAVoltageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="379.0" layoutY="10.0" minWidth="-Infinity" prefWidth="150.0" text="0.0" textAlignment="CENTER" textFill="RED">
+                        <Label fx:id="phaseAVoltageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="379.0" layoutY="10.0" minWidth="-Infinity" prefWidth="100.0" text="0.0" textAlignment="CENTER" textFill="RED">
                            <font>
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <Label fx:id="phaseBVoltageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="602.0" layoutY="10.0" minWidth="-Infinity" prefWidth="150.0" text="0.0" textAlignment="CENTER" textFill="#007f00">
+                        <Label fx:id="phaseBVoltageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="602.0" layoutY="10.0" minWidth="-Infinity" prefWidth="100.0" text="0.0" textAlignment="CENTER" textFill="#007f00">
                            <font>
                               <Font size="18.0" />
                            </font>
                         </Label>
-                        <Label fx:id="phaseCVoltageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="602.0" layoutY="10.0" minWidth="-Infinity" prefWidth="150.0" text="0.0" textAlignment="CENTER" textFill="BLUE">
+                        <Label fx:id="phaseCVoltageLabel" alignment="CENTER" contentDisplay="CENTER" layoutX="602.0" layoutY="10.0" minWidth="-Infinity" prefWidth="100.0" text="0.0" textAlignment="CENTER" textFill="BLUE">
                            <font>
                               <Font size="18.0" />
                            </font>

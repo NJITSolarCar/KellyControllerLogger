@@ -12,7 +12,9 @@ public class ConfigData
 	public int controllerCanId;
 	public int controllerResponseId;
 	public double samplingFreq;
-	public int samplePeriod;
+	public double currentChartScale;
+	public double voltageChartScale;
+	public double rpmChartScale;
 	public File logDir;
 	public int motorPoles;
 	public int baud;

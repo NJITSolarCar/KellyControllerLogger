@@ -40,8 +40,20 @@
             </HBox>
             <HBox layoutX="20.0" layoutY="60.0" maxWidth="1.7976931348623157E308">
                <children>
-                  <Label maxHeight="1.7976931348623157E308" text="RMS Sample Period: " />
-                  <TextField fx:id="samplePeriodField" HBox.hgrow="ALWAYS" />
+                  <Label maxHeight="1.7976931348623157E308" text="Current Chart Scale: " />
+                  <TextField fx:id="currentChartScaleField" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+            <HBox layoutX="20.0" layoutY="220.0" maxWidth="1.7976931348623157E308">
+               <children>
+                  <Label maxHeight="1.7976931348623157E308" text="Voltage Chart Scale: " />
+                  <TextField fx:id="voltageChartScaleField" HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+            <HBox layoutX="20.0" layoutY="180.0" maxWidth="1.7976931348623157E308">
+               <children>
+                  <Label maxHeight="1.7976931348623157E308" text="RPM Chart Scale: " />
+                  <TextField fx:id="rpmChartScaleField" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
             <HBox layoutX="20.0" layoutY="180.0" maxWidth="1.7976931348623157E308">

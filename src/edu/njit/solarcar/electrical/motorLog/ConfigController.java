@@ -36,10 +36,17 @@ public class ConfigController
 	private TextField controllerResponseIdField;
 	
 	@FXML
-	private TextField samplingFreqField;
+	private TextField currentChartScaleField;
 	
 	@FXML
-	private TextField samplePeriodField;
+	private TextField voltageChartScaleField;
+	
+	@FXML
+	private TextField rpmChartScaleField;
+	
+	@FXML
+	private TextField samplingFreqField;
+	
 	
 	@FXML
 	private TextField logDirectoryField;
@@ -92,7 +99,11 @@ public class ConfigController
 			d.controllerResponseId = Integer
 				.decode(controllerResponseIdField.getText());
 			d.samplingFreq = Double.parseDouble(samplingFreqField.getText());
-			d.samplePeriod = Integer.parseInt(samplePeriodField.getText());
+			
+			d.currentChartScale = Double.parseDouble(currentChartScaleField.getText());
+			d.voltageChartScale = Double.parseDouble(voltageChartScaleField.getText());
+			d.rpmChartScale = Double.parseDouble(rpmChartScaleField.getText());
+			
 			d.motorPoles = Integer.parseInt(motorPolesField.getText());
 			d.plotTime = Double.parseDouble(plotTimeField.getText());
 			
@@ -122,7 +133,11 @@ public class ConfigController
 		controllerResponseIdField
 			.setText(String.format("0x%X", d.controllerResponseId));
 		samplingFreqField.setText(String.format("%.1f", d.samplingFreq));
-		samplePeriodField.setText(String.valueOf(d.samplePeriod));
+		
+		currentChartScaleField.setText(String.format("%.1f", d.currentChartScale));
+		voltageChartScaleField.setText(String.format("%.1f", d.voltageChartScale));
+		rpmChartScaleField.setText(String.format("%.1f", d.rpmChartScale));
+
 		motorPolesField.setText(String.valueOf(d.motorPoles));
 		plotTimeField.setText(String.valueOf(d.plotTime));
 		logDirectoryField.setText(d.logDir.getAbsolutePath());

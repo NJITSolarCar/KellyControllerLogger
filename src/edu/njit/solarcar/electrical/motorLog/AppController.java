@@ -28,12 +28,14 @@ public class AppController extends Application
 			DEFAULT_DATA.baud = 115200;
 			DEFAULT_DATA.controllerCanId = 0x6B;
 			DEFAULT_DATA.controllerResponseId = 0x73;
-			DEFAULT_DATA.logDir = new File(System.getProperty("user.home"),
-				"KellyControllerLogger");
+			DEFAULT_DATA.logDir = new File(System.getProperty("user.home"), "KellyControllerLogger");
 			DEFAULT_DATA.motorPoles = 3;
-			DEFAULT_DATA.samplePeriod = 5;
 			DEFAULT_DATA.samplingFreq = 10;
 			DEFAULT_DATA.plotTime = 10;
+			DEFAULT_DATA.currentChartScale = 150;
+			DEFAULT_DATA.voltageChartScale = 100;
+			DEFAULT_DATA.rpmChartScale = 500;
+			
 			
 			Preferences.userRoot();
 			// Obtain a ref to the config
@@ -107,14 +109,20 @@ public class AppController extends Application
 			d.samplingFreq = prefs
 				.getDouble("samplingFreq", DEFAULT_DATA.samplingFreq);
 			
-			d.samplePeriod = prefs
-				.getInt("samplePeriod", DEFAULT_DATA.samplePeriod);
-			
 			d.motorPoles = prefs
 				.getInt("motorPoles", DEFAULT_DATA.motorPoles);
 			
 			d.plotTime = prefs
 				.getDouble("plotTime", DEFAULT_DATA.plotTime);
+			
+			d.currentChartScale = prefs
+				.getDouble("currentChartScale", DEFAULT_DATA.currentChartScale);
+			
+			d.voltageChartScale = prefs
+				.getDouble("voltageChartScale", DEFAULT_DATA.voltageChartScale);
+			
+			d.rpmChartScale = prefs
+				.getDouble("rpmChartScale", DEFAULT_DATA.rpmChartScale);
 			
 			// Handle root dir differently because we can't work straight with objects
 			d.logDir = new File(
@@ -141,7 +149,11 @@ public class AppController extends Application
 		prefs.putInt("controllerCanId", d.controllerCanId);
 		prefs.putInt("controllerResponseId", d.controllerResponseId);
 		prefs.putDouble("samplingFreq", d.samplingFreq);
-		prefs.putInt("samplePeriod", d.samplePeriod);
+		
+		prefs.putDouble("currentChartScale", d.currentChartScale);
+		prefs.putDouble("voltageChartScale", d.voltageChartScale);
+		prefs.putDouble("rpmChartScale", d.rpmChartScale);
+
 		prefs.put("logDir", d.logDir.getAbsolutePath());
 		prefs.putInt("motorPoles", d.motorPoles);
 		prefs.putDouble("plotTime", d.plotTime);
