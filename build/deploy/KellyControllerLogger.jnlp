@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="KellyControllerLogger.jnlp">
+  <information>
+    <title>KellyControllerLogger</title>
+    <vendor>NJIT Solar Car Team</vendor>
+    <description>Motor Controller Logger</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="KellyControllerLogger.jar" size="37628" download="eager" />
+    <jar href="libs\jssc-2.8.0.jar" size="153562" download="eager" />
+  </resources>
+  <jfx:javafx-desc  width="0" height="0" main-class="edu.njit.solarcar.electrical.motorLog.AppController"  name="Motor Controller Logger" />
+  <update check="background"/>
+</jnlp>
