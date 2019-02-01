@@ -166,7 +166,7 @@ public class SerialCAN implements CANBus
 		// Send. Momentarily disable the receive loop to manually inspect the response
 		setRxInterruptEnable(false);
 		try {
-			System.out.println("Send: " +buf.toString());
+			// System.out.println("Send: " +buf.toString());
 			if ( !port.writeString(buf.toString()) ) {
 				isConnected = false;
 				throw new IOException("Failed to write frame data to port!");

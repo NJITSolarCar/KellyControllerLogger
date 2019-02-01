@@ -39,12 +39,7 @@ public class ComController
 	
 	
 	public ComController() {
-		motorPollThread = Executors.newSingleThreadScheduledExecutor((r) -> {
-			Thread t = new Thread(r);
-			t.setDaemon(true);
-			t.setName("Motor Poll");
-			return t;
-		});
+		
 	}
 	
 	
@@ -89,6 +84,22 @@ public class ComController
 		int pollRate = (int) (1000 / conf.samplingFreq);
 		pollingStart = System.currentTimeMillis();
 		
+		startPollThread(pollRate);
+		
+		return true;
+	}
+
+
+
+	
+	private void startPollThread(int pollRate) {
+		motorPollThread = Executors.newSingleThreadScheduledExecutor((r) -> {
+			Thread t = new Thread(r);
+			t.setDaemon(true);
+			t.setName("Motor Poll");
+			return t;
+		});
+		
 		motorPollThread.scheduleAtFixedRate(() -> {
 			if(isPolling) {
 				try {
@@ -102,43 +113,39 @@ public class ComController
 					);
 					stopPolling();
 				}
+				catch (TimeoutException e) {
+					System.err.println("Encountered Timeout");
+				}
 			}
 		}, 0, pollRate, TimeUnit.MILLISECONDS);
-		
-		return true;
 	}
 	
 	
 	
-	private LogData poll() throws IOException {
-		try {
-			KBL96151.AdcBatch1 b1 = motor.readAdcBatch1();
-			KBL96151.AdcBatch2 b2 = motor.readAdcBatch2();
-			KBL96151.Monitor1 m1 = motor.readMonitor1();
-			
-			double rpm = ((double) motor.readElectronicRPM()) / AppController.readConfig().motorPoles;
-			double iTotal = phaseToRMS(b2.ia, b2.ib, b2.ic);
-			
-			LogData d = new LogData();
-			d.rpm = rpm;
-			d.iTotal = iTotal;
-			d.iA = b2.ia;
-			d.iB = b2.ib;
-			d.iC = b2.ic;
-			d.vbat = b1.vBat;
-			d.vA = b2.va;
-			d.vB = b2.vb;
-			d.vC = b2.vc;
-			d.vtotal = b1.vOperating;
-			d.throttle = b1.throttle;
-			d.motorTemp = m1.motorTemp;
-			d.controllerTemp = m1.controllerTemp;
-			
-			return d;
-		}
-		catch (TimeoutException e) {
-			throw new IOException("Timed out waiting for device response", e);
-		}
+	private LogData poll() throws IOException, TimeoutException {
+		KBL96151.AdcBatch1 b1 = motor.readAdcBatch1();
+		KBL96151.AdcBatch2 b2 = motor.readAdcBatch2();
+		KBL96151.Monitor1 m1 = motor.readMonitor1();
+		
+		double rpm = ((double) motor.readElectronicRPM()) / AppController.readConfig().motorPoles;
+		double iTotal = phaseToRMS(b2.ia, b2.ib, b2.ic);
+		
+		LogData d = new LogData();
+		d.rpm = rpm;
+		d.iTotal = iTotal;
+		d.iA = b2.ia;
+		d.iB = b2.ib;
+		d.iC = b2.ic;
+		d.vbat = b1.vBat;
+		d.vA = b2.va;
+		d.vB = b2.vb;
+		d.vC = b2.vc;
+		d.vtotal = b1.vOperating;
+		d.throttle = b1.throttle;
+		d.motorTemp = m1.motorTemp;
+		d.controllerTemp = m1.controllerTemp;
+		
+		return d;
 	}
 	
 	
@@ -160,6 +167,11 @@ public class ComController
 	
 	public void stopPolling() {
 		try {
+			if(motorPollThread != null) {
+				motorPollThread.shutdownNow();
+				motorPollThread.awaitTermination(1000, TimeUnit.MILLISECONDS);
+			}
+				
 			isPolling = false;
 			stopLogging();
 			

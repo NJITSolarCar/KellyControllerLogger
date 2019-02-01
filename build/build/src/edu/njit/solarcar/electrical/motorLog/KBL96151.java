@@ -47,7 +47,7 @@ public class KBL96151
 	public static final byte FLASH_CAL_BRAKE_DEAD_ZONE_HIGH_LEN = (byte) 1;
 	
 	// Application parameters
-	public static final int RESPONSE_TIMEOUT = 500;
+	public static final int RESPONSE_TIMEOUT = 1000;
 	public static final double VOLTAGE_SCALAR = 1 / 1.84;
 	
 	private CANBus canBus;

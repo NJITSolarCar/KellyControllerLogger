@@ -100,7 +100,7 @@ public class SerialCanRxListener implements SerialPortEventListener
 		if(event.isRXCHAR() && event.getEventValue() > 0) {
 			try {
 				bytes = port.readBytes();
-				System.out.print(new String(bytes));
+//				System.out.print(new String(bytes));
 			}
 			catch (SerialPortException e) {
 				throw new RuntimeException(e);
@@ -110,7 +110,7 @@ public class SerialCanRxListener implements SerialPortEventListener
 				buf[bufPtr++] = b;
 				
 				if (b == '\r') {
-					System.out.println("\\r");
+//					System.out.println("\\r");
 					CANFrame frame = procFrameBuf();
 					clearBuf();
 					if (frame != null) {
